@@ -1,0 +1,320 @@
+
+.cd-panel-container{
+	width: 900px;
+	/*height: 95%;*/
+	overflow-y: scroll;
+	overflow-x: hidden;
+}
+.panel-group{
+	margin-bottom: 5px;
+}
+.dropDown{
+	position: relative;
+}
+.option .labelText{
+	width: 100px;
+	float:left;
+	margin-right:15px;
+}
+.option .col-sm-8{
+	padding: 0;
+}
+.colpick_hex {
+	z-index: 9999;
+}
+.option label.labelBtn{
+	width: 80px;
+	height: 30px;
+	line-height: 30px;
+	font-weight: normal;
+	border: 1px solid #ccc;
+	border-radius: 3px;
+	text-align: center;
+	background: #ddd;
+	z-index: 9;
+}
+.drag,.dragBox,.columnBox,.childBox,.drag .speciesBox,.drag .pendantChild{
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+}
+.drag{
+	width:800px;
+	height:450px;
+	box-sizing: content-box;
+	overflow:hidden;
+	position:relative;
+	border: 1px solid #333;
+	font-size: 18px;
+	margin-left: 115px;
+}
+.drag .addDragTo,.drag .addColumnTo,.drag .addSpeciesTo,.drag .addChildTo,.drag .addPendantTo{
+	border: 1px solid #1582dc !important;
+	z-index: 9;
+}
+.drag .move{
+	width: 100%;
+	height: 100%;
+}
+.downBtn {
+	position:absolute;
+	bottom: 0;
+	left: 0;
+	cursor: s-resize;
+	width: 100%;
+	height: 5px;
+	z-index:5;
+}
+.downRightBtn {
+	position:absolute;
+	bottom: 0;
+	right: 0;
+	cursor: se-resize;
+	width: 7px;
+	height: 7px;
+	z-index:5;
+}
+.centerRightBtn {
+	position:absolute;
+	bottom: 0;
+	right: 0;
+	cursor: e-resize;
+	width: 5px;
+	height: calc(100% - 17px);
+	z-index:5;
+}
+.drag .closeEdit{
+	font-size: 18px;
+	opacity: .5;
+	color: #333;
+	right: 0;
+	top: 0;
+	position: absolute;
+	z-index: 99;
+}
+.drag .dragBox,.drag .speciesBox{
+	box-sizing:content-box;
+	border:1px solid gray;
+	position:absolute;
+	/*width:96%;*/
+	/*height:16%;*/
+	left: 16px;
+	top: 2%;
+	font-size: 12px;
+	color: #fff;
+	/*padding: 5px;*/
+}
+/*.drag .speciesBox{*/
+	/*overflow: auto;*/
+/*}*/
+.dragBox .columnBox{
+	box-sizing: content-box;
+	border: 1px solid gray;
+	position: absolute;
+	/*width:100px;*/
+	/*height:30px;*/
+	left: 10px;
+	top: 10px;
+	line-height: 30px;
+	font-size: 18px;
+}
+.speciesBox .recommendBox,.speciesBox .childBox{
+	/*box-sizing:content-box;*/
+	border: 1px solid gray;
+	position: absolute;
+	width: 150px;
+	height: 170px;
+	left: 10px;
+	top: 10px;
+	font-size: 18px;
+}
+.speciesBox .menuBox{
+	position: relative;
+	top: 0;
+	width: 100px;
+	height: 30px;
+	left: 0;
+}
+p.move,.menuBox p{
+	/*width: 100%;*/
+	/*height: 100%;*/
+	text-align: center;
+	box-sizing: content-box;
+	margin: 0;
+	color: #fff;
+	font-size: 18px;
+}
+p.childEdit{
+	width: 100%;
+	height: 30px;
+	line-height: 30px;
+	text-align: center;
+	position: absolute;
+	margin: 0;
+	bottom: 0;
+	background: #333;
+	opacity: 0.5;
+	color: #fff;
+	font-size: 18px;
+}
+/*首页*/
+.drag .hdDown {
+	width: 100%;
+    height: 100%;
+	position: absolute;
+	overflow: hidden;
+	top: 0;
+	left : 0;
+	z-index: 11;
+	background-size: 100% 100%;
+	display:none;
+}
+.hdDown ul {
+	/*width: 100%;
+	overflow-y: hidden;
+	overflow: auto;
+	height: 70px;*/
+	padding: 0;
+	margin: 0;
+	bottom: 0;
+	position: absolute;
+	/*color: rgba(0,0,0,0);*/
+	text-align: center;
+	font-size: 18px;
+	white-space:nowrap;
+	font-size: 0;
+}
+.hdDown ul li {
+	width: 159px;
+	height: 74px;
+	line-height: 74px;
+	font-size: 18px;
+	/*background: rgba(0,0,0,0.6);*/
+	display: inline-block;
+	border: 1px solid #333;
+	cursor:pointer;
+	position: relative;
+	background-size: auto 45%;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+.hdDown ul li p{
+	margin: 0;
+	font-size: 18px;
+}
+.hdDown ul li .columnClose{
+	position: absolute;
+	/*bottom: -15px;
+	left: calc(50% - 7px);*/
+	bottom: 0px;
+	right: 0px;
+	font-size: 15px;
+	opacity: .8;
+}
+.hdDown ul li .on {
+	/*background: #dcd9cb;*/
+	/*color: #392F2B;*/
+}
+.dropdown-content {
+	display: none;
+	position: absolute;
+	background-color: rgba(0,0,0,0.8);
+	width: 100%;
+	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+	bottom: 35px;
+}
+.hdDown ul li .dropdown-content span{
+	width: 100%;
+	color: #fff;
+	display: block;
+	position: relative;
+}
+.hdDown ul li .dropdown-content span:hover{
+	background: #AB744C;
+}
+.hdDown ul li .dropdown-content span .spanClose{
+	position: absolute;
+	bottom: 10px;
+	left: 100%;
+	font-size: 18px;
+	opacity: .8;
+	width: 15px;
+	height: 15px;
+}
+.drag .pendantChild{
+	position:absolute;
+	left:2%;
+	top:2%;
+	text-align:center;
+	cursor: move;
+	font-size: 12px;
+	box-sizing: content-box;
+	border: 1px solid #333;
+	color: #fff;
+}
+.pendantChild p,.pendantChild img{
+	position: absolute;
+	margin: 0;
+}
+.pendantChild p{
+	top: 0;
+}
+.drag .pendantChild button{
+	right: -20px;
+	top: 0px;
+	position: absolute;
+	opacity: 0.8;
+	font-size: 18px;
+}
+.drag .logo{
+    background: url(http://phenix-att-test.oss-cn-shanghai.aliyuncs.com/201801/A597821119_2621.png);
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+	position: absolute;
+	margin: 0;
+	bottom: 90px;
+	right: 67px;
+	z-index: 15;
+	width: 110px;
+	height: 37px;
+}
+
+/*图片上传回显*/
+.imgUpload{
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.languageName div{
+	margin-bottom: 15px;
+}
+.languageName div:last-child{
+	margin-bottom: 0;
+}
+.tableMenu input,.selectMenu{
+	background: rgba(0,0,0,0);
+}
+.tableMenu tbody tr.on{
+	background-color: #B0BED9;
+}
+.newMenuLanguage{
+	display: none;
+}
+.languageMenu input{
+	display: none;
+}
+.timeFormat div,.weatherNum div,.pmsContent div,.timeFormat div,.languageColor div {
+    margin-bottom: 15px;
+}
+.timeFormat > div:last-child,.weatherNum > div:last-child,.pmsContent div:last-child,.timeFormat div:last-child,.languageColor div:last-child{
+    margin-bottom: 0;
+}
+.prompt{
+    width: 24px;
+    height: 24px;
+    border: 1px solid #ccc;
+    display: inline-block;
+    border-radius: 14px;
+    text-align: center;
+    font-size: 16px;
+    margin: 5px 5px 0;
+}

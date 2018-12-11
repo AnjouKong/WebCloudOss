@@ -1,0 +1,77 @@
+.orglist{
+}
+.orgListBtn{}
+.orgListBtn ul{
+  margin:15px 0 15px 15px;
+}
+.orgListBtn ul li{
+  float: left;
+  width: 30%;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+}
+
+.orgListTree{
+  margin-left: 10px;
+}
+
+.userformBox .formSection{
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+.userformBox .formSection .label{
+  float: left;
+  width: 100px;
+  text-align: right;
+  margin-top: 3px;
+}
+.userformBox .formSection .con{
+  float: left;
+  width: 300px;
+}
+.userformBox .ant-form-item{
+  margin-bottom: 10px;
+}
+
+.tenantListPage{
+  padding: 15px;
+}
+.tenantListPage .tenantListBtn{
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+.tenantListBtn .btnList{
+  width: 200px;
+  float: left;
+}
+.tenantListPage .searchBox{
+  float: right;
+  width: 260px;
+  text-align: right;
+}
+.tenantListPage .searchBox input{
+  width: 160px;
+  margin-right: 10px;
+}
+
+.roleP-checkbox-row {
+  margin-bottom: 10px;
+}
+
+.roleP-checkbox-row-children {
+  margin-left: 50px;
+}
+
+.roleP-checkbox-row-children .ant-checkbox-wrapper + .ant-checkbox-wrapper {
+  margin-left: 0;
+  margin-right: 10px;
+}
+
+.roleP-checkbox-row-children label {
+  margin-right: 10px;
+}
+
+.roleP-checkbox-red {
+  color: red;
+}

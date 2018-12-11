@@ -1,0 +1,66 @@
+.orglist{
+}
+.orgListBtn{}
+.orgListBtn ul{
+  margin:15px 0 15px 15px;
+}
+.orgListBtn ul li{
+  float: left;
+  width: 30%;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+}
+
+.orgListTree{
+  margin-left: 10px;
+}
+
+.userformBox .formSection{
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+.userformBox .formSection .label{
+  float: left;
+  width: 100px;
+  text-align: right;
+  margin-top: 3px;
+}
+.userformBox .formSection .con{
+  float: left;
+  width: 300px;
+}
+.userformBox .ant-form-item{
+  margin-bottom: 10px;
+}
+
+.appListPage{
+  padding: 15px;
+}
+.appListPage .appListBtn{
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+.appListBtn .btnList{
+  width: 200px;
+  float: left;
+}
+.appListPage .searchBox{
+  float: right;
+  width: 200px;
+  text-align: right;
+}
+.appListPage .searchBox input{
+  width: 100px;
+  margin-right: 10px;
+}
+
+.appLogToolbar {
+  display: -webkit-flex; /* Safari */
+  display: flex;
+  flex-direction: row-reverse;
+  flex-wrap: wrap;
+  /*justify-content: right;*/
+  /*align-items: right;*/
+  margin-bottom: 15px;
+}

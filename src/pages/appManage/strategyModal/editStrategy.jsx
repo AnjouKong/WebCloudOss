@@ -1,0 +1,376 @@
+import React, { Component } from 'react';
+import { Modal, Form, Input, Select, message } from 'antd';
+import Utils from '../../../common/Utils';
+
+const FormItem = Form.Item;
+const Option = Select.Option;
+
+let appList = [];
+let appVersionList = [];
+let tenantList = [];
+
+class editStrategyComponent extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      modalVisible: false,
+      confirmLoading: false,
+      appData: [],
+      appVersionData: [],
+      label: '',
+      versionName: '',
+      tenantData: [],
+      strategyDetailId: '',
+    };
+  }
+
+  componentWillMount() {
+    this.getAppList();
+    this.getTenantList();
+  }
+
+  componentDidMount() {
+    this.props.onRef(this);
+  }
+  // 获取商户列表
+  getTenantList = () => {
+    Utils.request({
+      url: `${window.PAY_API_HOST}/op/system/tenant/page`,
+      method: 'post',
+      data: {
+        page: 1,
+        size: 10000,
+      }
+    })
+    .then(res => {
+      const resData = res.data;
+      this.setState({
+        tenantData: resData,
+      });
+    })
+    .catch(() => {
+    });
+  }
+  // 获取应用列表
+  getAppList = () => {
+    Utils.request({
+      url: `${window.PAY_API_HOST}/op/app/apk/list`,
+      method: 'get',
+    })
+    .then(res => {
+      const resData = res.data;
+      this.setState({
+        appData: resData,
+      });
+    })
+    .catch(() => {
+    });
+  };
+  // 获取应用版本列表接口
+  getAppVersionList = (packageName, versionCode) => {
+    Utils.request({
+      url: `${window.PAY_API_HOST}/op/app/apk/file/list`,
+      method: 'get',
+      data: {
+        packageName,
+      }
+    })
+    .then(res => {
+      const resData = res.data;
+      this.setState({
+        appVersionData: resData,
+      });
+      this.props.form.setFieldsValue({
+        versionCode,
+      });
+    })
+    .catch(() => {
+    });
+  };
+  // 创建应用选择列表
+  creatAppDom = () => {
+    const { appData } = this.state;
+    appList = [];
+    appData.map((item, index) =>
+      appList.push(
+        <Option key={index} value={item.packageName}>{item.label}</Option>
+      )
+    );
+  };
+  // 创建应用选择列表
+  creatAppVersionDom = () => {
+    const { appVersionData } = this.state;
+    appVersionList = [];
+    appVersionData.map((item, index) =>
+      appVersionList.push(
+        <Option key={index} value={item.versionCode}>{item.versionName}</Option>
+      )
+    );
+  };
+  // 创建商户列表
+  creatTenantDom = () => {
+    const { tenantData } = this.state;
+    tenantList = [];
+    tenantData.map((item, index) =>
+      tenantList.push(
+        <Option key={index} value={item.id} title={item.tenantName}>{item.tenantName}</Option>
+      )
+    );
+  }
+  // 弹出框处理函数
+  showModal = (record) => {
+    console.log(record);
+    this.setState({
+      modalVisible: true,
+      strategyDetailId: record.key,
+      // appUpgradeId: record.appUpgradeId,
+      // tenantId: tenantIds,
+    });
+    appVersionList = [];
+    this.getAppVersionList(record.packageName, record.versionCode);
+    setTimeout(() => {
+      this.props.form.setFieldsValue({
+        title: record.title,
+        packageName: record.packageName,
+        // versionCode: record.versionCode,
+        tenantId: record.tenantId,
+        appAction: record.appAction,
+        groupId: record.groupId ? record.groupId : '',
+        room: record.room ? record.room : '',
+        deviceId: record.deviceId ? record.deviceId : '',
+        maxVersionCode: record.maxVersionCode ? record.maxVersionCode : '',
+        minVersionCode: record.minVersionCode ? record.minVersionCode : '',
+      });
+    }, 200);
+  };
+  modalCancel = () => {
+    this.setState({
+      modalVisible: false,
+      confirmLoading: false,
+    });
+  };
+  handleSubmit = (e) => {
+    e.preventDefault();
+    this.props.form.validateFieldsAndScroll((err, values) => {
+      if (!err) {
+        console.log('Received values of form: ', values);
+        this.setState({
+          confirmLoading: true,
+        });
+        // 添加策略详情
+        const param = {
+          ...values,
+          label: this.state.label,
+          versionName: this.state.versionName,
+          id: this.state.strategyDetailId,
+          minVersionCode: values.minVersionCode === undefined ? '' : values.minVersionCode,
+          maxVersionCode: values.maxVersionCode === undefined ? '' : values.maxVersionCode,
+          // appUpgradeId: this.props.id,
+          // tenantId: this.props.tenantIds,
+        };
+        console.log(param);
+        this.editStrategyAPI(param);
+      }
+    });
+  };
+  editStrategyAPI = (param) => {
+    Utils.request({
+      url: `${window.PAY_API_HOST}/op/app/version/update`,
+      method: 'post',
+      data: param,
+    })
+      .then(res => {
+        if (res && res.success) {
+          this.setState({
+            modalVisible: false,
+            confirmLoading: false,
+          });
+          message.success('修改策略成功');
+          this.props.onOK();
+        }
+      })
+      .catch(() => {
+        this.setState({
+          modalVisible: false,
+          confirmLoading: false,
+        });
+        message.error('修改策略失败');
+      });
+  };
+
+  // 选择应用 获取应用版本
+  handleAppSelectChange = (value, option) => {
+    this.setState({
+      label: option.props.children,
+      appVersionData: [],
+    });
+    this.props.form.setFieldsValue({
+      versionCode: '',
+    });
+    appVersionList = [];
+    this.getAppVersionList(value);
+  };
+  // 获取应用版本名称code
+  handleVersionChange = (value, option) => {
+    this.setState({
+      versionName: option.props.children,
+    });
+  };
+
+  render() {
+    const { modalVisible } = this.state;
+    const { getFieldDecorator } = this.props.form;
+    const formItemLayout = {
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 6 },
+      },
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 16 },
+      },
+    };
+
+    this.creatAppDom();
+    this.creatAppVersionDom();
+    this.creatTenantDom();
+
+    return (
+      <Modal
+        title="编辑策略"
+        visible={modalVisible}
+        onOk={this.handleSubmit}
+        onCancel={this.modalCancel}
+        confirmLoading={this.state.confirmLoading}
+        destroyOnClose
+        width="600px"
+      >
+        <div className="userformBox">
+          <Form>
+            <FormItem
+              {...formItemLayout}
+              label="名称"
+              hasFeedback
+            >
+              {getFieldDecorator('title', {
+                rules: [
+                  { required: true, message: '请填写名称' },
+                ],
+              })(
+                <Input />
+              )}
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              label="应用"
+              hasFeedback
+            >
+              {getFieldDecorator('packageName', {
+                rules: [
+                  { required: true, message: '请选择应用' },
+                ],
+              })(
+                <Select onChange={this.handleAppSelectChange}>
+                  { appList }
+                </Select>
+              )}
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              label="应用版本"
+              hasFeedback
+            >
+              {getFieldDecorator('versionCode', {
+                rules: [
+                  { required: true, message: '请选择应用版本' },
+                ],
+              })(
+                <Select onChange={this.handleVersionChange}>
+                  { appVersionList }
+                </Select>
+              )}
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              label="商户"
+              hasFeedback
+            >
+              {getFieldDecorator('tenantId', {
+                rules: [
+                  { required: true, message: '请选择商户' },
+                ],
+              })(
+                <Select>
+                  { tenantList }
+                </Select>
+              )}
+            </FormItem>
+            <FormItem label="安装/卸载" {...formItemLayout} >
+              {getFieldDecorator('appAction', {
+              })(
+                <Select id="appAction" >
+                  <Option value="install">安装</Option>
+                  <Option value="remove">卸载</Option>
+                </Select>
+              )}
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              label="最小版本号"
+            >
+              {getFieldDecorator('minVersionCode', {
+                rules: [{ message: '请输入最小版本号!' }],
+              })(
+                <Input />
+              )}
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              label="最大版本号"
+            >
+              {getFieldDecorator('maxVersionCode', {
+                rules: [{ message: '请输入最大版本号!' }],
+              })(
+                <Input />
+              )}
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              label="分组ID"
+            >
+              {getFieldDecorator('groupId', {
+                rules: [{ message: '请输入分组ID' }],
+              })(
+                <Input />
+              )}
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              label="房间号"
+            >
+              {getFieldDecorator('room', {
+                rules: [{ message: '请输入房间号' }],
+              })(
+                <Input />
+              )}
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              label="设备ID"
+            >
+              {getFieldDecorator('deviceId', {
+                rules: [{ message: '请输入设备ID' }],
+              })(
+                <Input />
+              )}
+            </FormItem>
+          </Form>
+        </div>
+      </Modal>
+    );
+  }
+}
+
+const editStrategy = Form.create()(editStrategyComponent);
+export default editStrategy;

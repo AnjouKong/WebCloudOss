@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <link rel="stylesheet" href="base/bootstrap.min.css">
+  <link rel="stylesheet" href="base/jquery.gridster.min.css">
+  <link rel="stylesheet" href="base/dataTables.bootstrap.css">
+  <link rel="stylesheet" href="base/jstree.min.css">
+  <link rel="stylesheet" href="base/colpick.css">
+  <link rel="stylesheet" href="base/main.css">
+  <link rel="stylesheet" href="base/style.min.css">
+  <link rel="stylesheet" href="base/palette.css">
+  <script src="base/jquery-1.11.1.min.js"></script>
+  <script src="base/bootstrap.js"></script>
+  <script src="base/jquery.gridster.min.js"></script>
+  <script src="base/jquery.dataTables.js"></script>
+  <script src="base/dataTables.bootstrap.js"></script>
+  <script src="base/jstree.min.js"></script>
+  <script src="base/colpick.js"></script>
+  <script src="base/main.js"></script>
+  <script src="base/utils.js"></script>
+  <!--  -->
+  <link rel="stylesheet" href="css/mainDrag.css">
+  <script src="js/sourceDataTable.js"></script>
+  <script src="js/resourceTree.js"></script>
+  <script src="js/appui.js"></script>
+  <script src="js/moveSize.js"></script>
+  <script src="js/moveDrag.js"></script>
+  <script src="js/sceneCustom.js"></script>
+  <script src="js/echoCustom.js"></script>
+</head>
+<body>
+  <div class="content-wrap">
+    <div class="wrapper">
+      <div class="col-md-12 form-horizontal option">
+        <label class="labelBtn" id="goBack" style="margin-left: 800px; background-color: #1890ff; color: #fff;">返回</label>
+        <div class="form-group">
+            <label class="labelText control-label">整体：</label>
+            <div class="col-sm-8">
+                <label class="labelBtn" id="overallEdit" data-toggle='modal' data-target='#overallDetail'>编辑</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="labelText control-label">业务容器：</label>
+            <div class="col-sm-8">
+                <div style="float:left; margin-right:7px;">
+                    <label class="labelBtn labelBtnDrag" data-toggle="dropdown">挂件</label>
+                    <ul class="dropdown-menu">
+                        <li><a href="#" id="time">时间time</a></li>
+                        <li><a href="#" id="weather">天气weather</a></li>
+                        <li><a href="#" id="date">日期date</a></li>
+                        <li><a href="#" id="area">地区area</a></li>
+                    </ul>
+                </div>
+                <label class="labelBtn" id="pms">PMS信息</label>
+                <label class="labelBtn" id="multiLanguage">多语言</label>
+            </div>
+        </div>
+      </div>
+      <div class="drag">
+        <canvas id="canvas" width="800" height="450" style="position: absolute; left: 0; top: 0;"></canvas>
+        <div class="newMenuLanguage">
+          <select class="col-sm-3 form-control selectMenu" style="width: 110px;">
+            <!--<option value="0">中文</option>-->
+          </select>
+          <div class="col-sm-8 languageMenu" style="width: calc(100% - 110px);">
+            <!--<input type="text" class="form-control" placeholder="请填写1" />-->
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12 saveTemp" style="margin-left: 100px;">
+        <div class="btn-group tool-button">
+          <a class="btn btn-primary navbar-btn" href="#" id="save" data-pjax>暂存</a>
+          <a class="btn btn-primary navbar-btn" href="#"  id="dataText" data-toggle='modal'
+          data-target='#textDetail' data-pjax>数据文本</a>
+        </div>
+      </div>
+    </div>
+  </div>
+<!--数据文本-->
+<div id="textDetail" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h5 class="modal-title">可编辑数据文本</h5>
+            </div>
+            <div class="modal-body">
+                <input type="button" class="btn btn-primary" onClick="textCopy();" value="复制" style="margin-bottom: 5px;"/>
+                <textarea id="contents" rows="20" style="width: 100%;" readonly></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                <button id="textSave" type="button" class="btn btn-primary" data-loading-text="正在修改...">保 存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 整体编辑 -->
+<div id="overallDetail" class="modal Slide in bs-modal-sm from-right" tabindex="-3" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog cd-panel-container">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h5 class="modal-title">整体编辑</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12 form-horizontal">
+                        <div class="form-group customLanguage">
+                            <!-- <input type="hidden" value=${i.languageName} name=${i.language}> -->
+                        </div>
+                        <div class="form-group languageColor">
+                            <!-- <label class="col-xs-3 control-label">${i.languageName}背景：</label>
+                            <div class="col-xs-8">
+                                <input type="text" name=${i.language} id="overallBG${i.id}" data-parsley-required="true" class="form-control" placeholder="例如：#333">
+                            </div> -->
+                        </div>
+                        <div class="form-group languagePic">
+                            <!-- <div class="col-xs-12">
+                                <label class="col-xs-3 control-label">${i.languageName}背景图片：</label>
+                                <div class="col-xs-4 uploadImg">
+                                    <input type="file" name="pic" accept="image/*"  />
+                                    <input type="hidden" name="picSrc" />
+                                </div>
+                                <button type="button" class="col-xs-3 deleteUpload" style="width: 120px;">删除图片</button>
+                            </div> -->
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-3 control-label">字体：</label>
+                            <div class="col-xs-8">
+                                <input type="text" id="overallFont"
+                                       data-parsley-required="true"
+                                       class="form-control" placeholder="例如：16px">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-3 control-label">字体颜色：</label>
+                            <div class="col-xs-8">
+                                <input type="text" id="overallColor"
+                                       data-parsley-required="true"
+                                       class="form-control" placeholder="例如：#ffffff">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-3 control-label">是否授权：</label>
+                            <div class="col-xs-8 allAuthority" style="padding-top: 7px;">
+                                <input type="radio" name="allAuthority" value="1" data-parsley-required="true">是
+                                <input type="radio" name="allAuthority" value="0" data-parsley-required="true"
+                                       checked>否
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                <button id="overall" type="button" class="btn btn-primary" data-loading-text="正在修改...">保 存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- modal编辑 -->
+<div id="publicDetail" class="modal Slide in bs-modal-sm from-right" tabindex="-3" role="dialog" data-backdrop="static" aria-hidden="true" data-keyboard="false">
+    <div class="modal-dialog cd-panel-container">
+        <div class="modal-content ">
+            <div class="modal-header ">
+                <button id="publicClose" type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h5 class="modal-title">编辑</h5>
+            </div>
+            <!--容器信息-->
+            <div class="panel-group" id="accordionPanel">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h5 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordionPanel" href="#collapsePanel">
+                                容器信息
+                            </a>
+                        </h5>
+                    </div>
+                    <div id="collapsePanel" class="panel-collapse collapse in">
+                        <div class="panel-body">
+                            <div class="col-xs-12 form-horizontal">
+                                <div class="form-group pmsContent">
+                                    <!-- <label class="col-xs-3 control-label">${i.languageName}内容：</label>
+                                    <div class="col-xs-8">
+                                        <textarea rows="1" class="form-control defaultContent" style="margin-bottom: 15px;" placeholder="默认内容"></textarea>
+                                        <textarea rows="1" class="form-control customContent" placeholder="自定义内容"></textarea>
+                                        <input type="hidden" value="${i.language}">
+                                    </div> -->
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-xs-3 control-label">是否滚动：</label>
+                                    <div class="col-xs-8 roll" style="padding-top: 4px;">
+                                        <input type="radio" name="roll" value="1" >是
+                                        <input type="radio" name="roll" value="0" checked>否
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-xs-3 control-label">宽：</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" id="previewW" class="form-control" placeholder="例如：100">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-xs-3 control-label">高：</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" id="previewH" class="form-control" placeholder="例如：100">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-xs-3 control-label">位置X轴：</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" id="previewX" class="form-control" placeholder="例如：100">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-xs-3 control-label">位置Y轴：</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" id="previewY" class="form-control" placeholder="例如：100">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-xs-3 control-label">背景颜色：</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" id="previewBG"
+                                               data-parsley-required="true"
+                                               class="form-control" placeholder="例如 #fff">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-xs-3 control-label">背景图片：</label>
+                                    <div class="col-xs-4 previewBGUpload">
+                                        <input type="file" name="pic" accept="image/*"  />
+                                        <input type="hidden" name="picSrc" />
+                                    </div>
+                                    <button type="button" class="col-xs-3 deleteUpload" style="width: 120px;">删除图片</button>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-xs-3 control-label">字体颜色：</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" id="previewColor" class="form-control" placeholder="例如：#ffffff">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-xs-3 control-label">字体大小：</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" id="previewSize" class="form-control" placeholder="例如：16px">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--基本信息 pendantInfo/indexSort：栏目和推荐显示  recomInfo：推荐显示  columnInfo：栏目显示 -->
+            <div class="panel-group" id="accordion">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h5 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                                基本信息
+                            </a>
+                        </h5>
+                    </div>
+                    <div id="collapseOne" class="panel-collapse collapse in">
+                        <div class="panel-body">
+                            <div class="col-xs-12 form-horizontal">
+                                <div class="form-group timeFormat">
+                                    <!-- <label class="col-xs-3 control-label">${i.languageName}显示格式：</label>
+                                    <div class="col-xs-8">
+                                        <input type="hidden" value="${i.language}">
+                                        <input type="text" class="form-control" placeholder="输入格式" style="width: 70%; display: inline-block">
+                                        <a href="#" class="prompt" data-toggle="tooltip" title="
+推荐格式：
+yyyy-MM-dd HH:mm:ss 2000-01-01 00:00:00
+yyyy年MM月dd 2000年01月01
+HH:mm:ss 00:00:00
+MMM d,yyyy 一月 1,2000">?</a>
+                                        <select class="form-control" style="width: 20%; display: inline-block;">
+                                            <option value="">默认</option>
+                                            <option value="zh">中文</option>
+                                            <option value="en">英文</option>
+                                        </select>
+                                    </div> -->
+                                </div>
+                                <div class="form-group weatherNum">
+                                    <label class="col-xs-3 control-label">天数：</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" id="weatherNum" class="form-control" placeholder="0：今天，1：明天，2：后天……">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-xs-3 control-label">宽：</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" id="editW" class="form-control" placeholder="例如：100">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-xs-3 control-label">高：</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" id="editH" class="form-control" placeholder="例如：100">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-xs-3 control-label">位置X轴：</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" id="positionX" class="form-control" placeholder="例如：100">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-xs-3 control-label">位置Y轴：</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" id="positionY" class="form-control" placeholder="例如：100">
+                                    </div>
+                                </div>
+                                <div class="form-group radius">
+                                    <label class="col-xs-3 control-label">圆角：</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" id="radius" class="form-control" placeholder="例如：5">
+                                    </div>
+                                </div>
+                                <div class="form-group leftImage">
+                                    <label class="col-xs-3 control-label">左箭头图片：</label>
+                                    <div class="col-xs-4 leftArrow">
+                                        <input type="file" name="pic" accept="image/*"  />
+                                        <input type="hidden" name="picSrc" />
+                                    </div>
+                                    <button type="button" class="col-xs-3 deleteUpload" style="width: 120px;">删除图片</button>
+                                </div>
+                                <div class="form-group rightImage">
+                                    <label class="col-xs-3 control-label">右箭头图片：</label>
+                                    <div class="col-xs-4 rightArrow">
+                                        <input type="file" name="pic" accept="image/*"  />
+                                        <input type="hidden" name="picSrc" />
+                                    </div>
+                                    <button type="button" class="col-xs-3 deleteUpload" style="width: 120px;">删除图片</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--样式信息-->
+            <div class="panel-group" id="accordionStyle">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h5 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordionStyle" href="#staticStateStyle">
+                                样式信息
+                            </a>
+                        </h5>
+                    </div>
+                    <div id="staticStateStyle" class="panel-collapse collapse in">
+                        <!--静态样式-->
+                        <div class="panel-collapse collapse in">
+                            <a data-toggle="collapse" data-parent="#staticStateStyle"
+                               href="#collapseFo">
+                                <h5 style='padding:10px 20px 5px;'>静态样式：</h5>
+                            </a>
+                            <div id="collapseFo" class="panel-collapse">
+                                <div class="col-xs-12 form-horizontal">
+                                    <div class="form-group upload iconEdit">
+                                        <label class="col-xs-3 control-label">图标：</label>
+                                        <div class="col-xs-4 iconStatic">
+                                            <input type="file" name="pic" accept="image/*"  />
+                                            <input type="hidden" name="picSrc" />
+                                        </div>
+                                        <button type="button" class="col-xs-3 deleteUpload" style="width: 120px;">删除图片</button>
+                                    </div>
+                                    <div class="form-group iconEdit">
+                                        <label class="col-xs-3 control-label">图标位置：</label>
+                                        <div class="col-xs-8">
+                                            <select class="form-control iconStaticPosition">
+                                                <option value="top">上</option>
+                                                <option value="bottom">下</option>
+                                                <option value="left">左</option>
+                                                <option value="right">右</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group iconEdit">
+                                        <label class="col-xs-3 control-label">宽度：</label>
+                                        <div class="col-xs-8">
+                                            <input type="text" id="iconStaticWidth" value="18" class="form-control" placeholder="例如：18">
+                                        </div>
+                                    </div>
+                                    <div class="form-group iconEdit">
+                                        <label class="col-xs-3 control-label">高度：</label>
+                                        <div class="col-xs-8">
+                                            <input type="text" id="iconStaticHeight" value="18" class="form-control" placeholder="例如：18">
+                                        </div>
+                                    </div>
+                                    <div class="form-group iconEdit">
+                                        <label class="col-xs-3 control-label">间距：</label>
+                                        <div class="col-xs-8">
+                                            <input type="text" id="iconStaticSpacing" value="7" class="form-control" placeholder="例如：7">
+                                        </div>
+                                    </div>
+                                    <div class="form-group pendantInfo">
+                                        <label class="col-xs-3 control-label">背景颜色：</label>
+                                        <div class="col-xs-8">
+                                            <input type="text" id="staticBG"
+                                                   data-parsley-required="true"
+                                                   class="form-control" placeholder="例如 #fff">
+                                        </div>
+                                    </div>
+                                    <div class="form-group upload pendantInfo">
+                                        <label class="col-xs-3 control-label">背景图片：</label>
+                                        <div class="col-xs-4 backgImage">
+                                            <input type="file" name="pic" accept="image/*"  />
+                                            <input type="hidden" name="picSrc" />
+                                        </div>
+                                        <button type="button" class="col-xs-3 deleteUpload" style="width: 120px;">删除图片</button>
+                                    </div>
+                                    <div class="form-group recPublic">
+                                        <label class="col-xs-3 control-label">字体颜色：</label>
+                                        <div class="col-xs-8">
+                                            <input type="text" id="staticColor"
+                                                   data-parsley-required="true"
+                                                   class="form-control" placeholder="例如：#ffffff">
+                                        </div>
+                                    </div>
+                                    <div class="form-group recPublic">
+                                        <label class="col-xs-3 control-label">字体大小：</label>
+                                        <div class="col-xs-8">
+                                            <input type="text" id="staticSize"
+                                                   data-parsley-required="true" class="form-control"
+                                                   placeholder="例如：16px">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-body pendantInfoHide"></div>
+                        </div>
+                        <!--聚焦样式-->
+                        <div class="panel-collapse collapse in pendantInfo">
+                            <a data-toggle="collapse" data-parent="#staticStateStyle" href="#collapseFour">
+                                <h5 style='padding:10px 20px 5px;'>聚焦样式：</h5>
+                            </a>
+                            <div id="collapseFour" class="panel-collapse">
+                                <div class="col-xs-12 form-horizontal">
+                                    <div class="form-group">
+                                        <label class="col-xs-3 control-label">背景颜色：</label>
+                                        <div class="col-xs-8">
+                                            <input type="text" id="focusBG"
+                                                   data-parsley-required="true"
+                                                   class="form-control" placeholder="例如 #fff">
+                                        </div>
+                                    </div>
+                                    <div class="form-group upload">
+                                        <label class="col-xs-3 control-label">背景图片：</label>
+                                        <div class="col-xs-4 focusImage">
+                                            <input type="file" name="pic" accept="image/*"  />
+                                            <input type="hidden" name="picSrc" />
+                                        </div>
+                                        <button type="button" class="col-xs-3 deleteUpload" style="width: 120px;">删除图片</button>
+                                    </div>
+                                    <div class="form-group recPublic">
+                                        <label class="col-xs-3 control-label">字体颜色：</label>
+                                        <div class="col-xs-8">
+                                            <input type="text" id="focusColor"
+                                                   data-parsley-required="true"
+                                                   class="form-control" placeholder="例如：#ffffff">
+                                        </div>
+                                    </div>
+                                    <div class="form-group recPublic">
+                                        <label class="col-xs-3 control-label">字体大小：</label>
+                                        <div class="col-xs-8">
+                                            <input type="text" id="focusSize"
+                                                   data-parsley-required="true"
+                                                   class="form-control" placeholder="例如：18px">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-body pendantFocusHide"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="publicCancel" type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                <button id="publicSave" type="button" class="btn btn-primary" data-loading-text="正在修改...">保 存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 删除 -->
+<div id="deleteCheck" class="modal fade bs-modal-lg" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">删除</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12 mb10">
+                        删除后无法恢复，确定删除吗？
+                    </div>
+                    <div class="col-xs-12">
+                        <ul id="checkedUser" class="list-group"></ul>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                <button id="deleteConfirm" type="button" class="btn btn-primary" data-loading-text="正在删除...">确 定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

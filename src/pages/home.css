@@ -1,0 +1,82 @@
+.logo {
+	height: 60px;
+	margin: 0px auto;
+  margin-top: 2px;
+	text-align: center;
+	background-image: url("../images/logo_01.png");
+	background-repeat: no-repeat;
+	background-size: auto 100%;
+	background-position: left;
+}
+.set-menu {
+  position: absolute;
+  right: 50px;
+  top: 16px;
+  line-height: 30px;
+}
+/*.logout {*/
+  /*position: absolute;*/
+  /*right: 20px;*/
+  /*top: 16px;*/
+/*}*/
+
+.userformBox .formSection{
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+.userformBox .formSection .label{
+  float: left;
+  width: 100px;
+  text-align: right;
+  margin-top: 3px;
+}
+.userformBox .formSection .con{
+  float: left;
+  width: 300px;
+}
+.userformBox .formSection .ico{
+  float: left;
+  width: 30px;
+  margin-top: 4.3px;
+  margin-left: 5px;
+}
+.userformBox .formSection .redTip{
+  color: red;
+}
+.userformBox .formSection .greenTip{
+  color: green;
+}
+.userformBox .ant-form-item{
+  margin-bottom: 10px;
+}
+
+.ant-layout{
+	min-height: 100%;
+}
+.ant-layout .ant-layout-has-sider{
+	height: calc(100% - 64px);
+}
+.trigger {
+  font-size: 18px;
+  line-height: 64px;
+  padding: 0 16px;
+  cursor: pointer;
+  transition: color .3s;
+}
+.trigger:hover {
+  color: #108ee9;
+}
+.ant-layout-sider-collapsed .anticon {
+  font-size: 16px;
+}
+.ant-layout-sider-collapsed .nav-text {
+  display: none;
+}
+
+.index-h2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 100px;
+}
+

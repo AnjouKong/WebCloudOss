@@ -1,0 +1,22 @@
+.nodeInfo{
+	margin-bottom: 13px;
+    line-height: 40px;
+}
+.nodeInfo > span:nth-child(1){
+	width: 150px;
+	text-align: right;
+	display: inline-block;
+}
+.nodeInfo > input{
+	width: calc(100% - 170px);
+	display: inline-block;
+}
+.nodeInfo > span.required:before{
+    display: inline-block;
+    margin-right: 4px;
+    content: "*";
+    font-family: SimSun;
+    line-height: 1;
+    font-size: 14px;
+    color: #f5222d;
+}

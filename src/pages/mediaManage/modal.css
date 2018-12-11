@@ -1,0 +1,44 @@
+.mediaModalRow,.editModalRow,.topicModal{
+    width: 100%;
+    margin-bottom: 17px;
+    overflow: hidden;
+    line-height: 40px;
+}
+.mediaModalRow > span,.editModalRow > span{
+    width: 100px;
+    text-align: right;
+    float: left;
+    margin-right: 7px;
+}
+.topicModal > span:nth-child(1){
+    width: 130px;
+    float: left;
+    text-align: right;
+    margin-right: 7px;
+}
+.mediaModalRow > input,.editModalRow > input,.topicModal > input{
+    width: 340px;
+    height: 40px;
+    padding: 6px 11px;
+    font-size: 16px;
+    float: left;
+}
+.editModalRow > input{
+    width: calc(100% - 110px);
+    float: left;
+}
+.addMediaSide{
+    height: 630px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+}
+.addMediaSide button,.addMediaSide input{
+    margin: 7px 0 0 7px;
+}
+.addMediaCenter{
+    margin-top: 290px;
+}
+.addMediaCenter button{
+    width: 80%;
+    margin: 0 10% 10px;
+}

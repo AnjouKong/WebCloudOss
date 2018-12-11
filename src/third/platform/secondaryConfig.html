@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link rel="stylesheet" href="base/bootstrap.min.css">
+    <link rel="stylesheet" href="base/jquery.gridster.min.css">
+    <link rel="stylesheet" href="base/dataTables.bootstrap.css">
+    <link rel="stylesheet" href="base/jstree.min.css">
+    <link rel="stylesheet" href="base/colpick.css">
+    <link rel="stylesheet" href="base/main.css">
+    <link rel="stylesheet" href="base/style.min.css">
+    <link rel="stylesheet" href="base/palette.css">
+    <script src="base/jquery-1.11.1.min.js"></script>
+    <script src="base/bootstrap.js"></script>
+    <script src="base/jquery.gridster.min.js"></script>
+    <script src="base/jquery.dataTables.js"></script>
+    <script src="base/dataTables.bootstrap.js"></script>
+    <script src="base/jstree.min.js"></script>
+    <script src="base/colpick.js"></script>
+    <script src="base/main.js"></script>
+    <script src="base/utils.js"></script>
+    <!--  -->
+    <link rel="stylesheet" href="css/mainDrag.css">
+    <script src="js/sourceDataTable.js"></script>
+    <script src="js/resourceTree.js"></script>
+    <script src="js/appui.js"></script>
+    <script src="js/moveSize.js"></script>
+    <script src="js/moveDrag.js"></script>
+    <style>
+        ul {
+            margin-bottom: 26px;
+            background: #ece9e9;
+        }
+        .tabTitle {
+            width: 100%;
+            height: 34px;
+            line-height: 34px;
+            overflow: hidden;
+            list-style: none;
+            border: 1px solid #e3e6f3;
+            padding: 0;
+            font-weight: bold;
+        }
+
+        .tabTitle li {
+            float: left;
+            padding: 0 10px;
+        }
+
+        .tabTitle li:nth-child(1), .tabTitle li:nth-child(3) {
+            width: 150px;
+        }
+
+        .tabTitle li:nth-child(2), .tabTitle li:nth-child(4), .tabTitle li:nth-child(5) {
+            width: calc(33.3% - 100px);
+        }
+
+        .tabContent {
+            width: 100%;
+            overflow: hidden;
+            list-style: none;
+            border: 1px solid #e3e6f3;
+            padding-left: 0;
+            padding-top: 15px;
+        }
+
+        .tabContent li {
+            float: left;
+            padding: 0 6px;
+        }
+
+        .tabContent li:nth-child(1), .tabContent li:nth-child(3) .itemUpload {
+            width: 150px;
+        }
+
+        .tabContent li:nth-child(2) {
+            width: calc(33.3% - 100px);
+        }
+
+        .tabContent li:nth-child(3) {
+            width: 62%;
+            padding: 0;
+        }
+
+        .tabContent li:nth-child(3) .itemUpload, .tabContent li:nth-child(3) .itemTitle, .tabContent li:nth-child(3) .itemContent {
+            padding: 0 10px;
+        }
+
+        .tabContent li:nth-child(3) .itemTitle, .tabContent li:nth-child(3) .itemContent {
+            width: calc(50% - 75px);
+        }
+
+        .tabItem {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            padding-right: 10px;
+        }
+
+        .tabItem .deleteItem {
+            position: absolute;
+            right: 0;
+            top: 0;
+            font-size: 16px;
+            line-height: 16px;
+            z-index: 9;
+            cursor: pointer;
+        }
+
+        .tabItem > div {
+            width: 33.3%;
+            float: left;
+        }
+
+        .form-group {
+            overflow: hidden;
+        }
+
+        .form-group span {
+            width: 68px;
+            text-align: right;
+            float: left;
+            height: 34px;
+            line-height: 34px;
+
+        }
+
+        .form-group input {
+            width: calc(100% - 68px);
+            float: left;
+            border: 1px solid #e3e6f3;
+            border-radius: 2px;
+            height: 34px;
+            padding: 6px 12px;
+        }
+
+        .selected {
+            background-color: #B0BED9;
+        }
+
+        .imgUpload {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 100%;
+            display: flex;
+            display: -webkit-flex;
+            flex-direction: row;
+            padding: 0;
+        }
+
+        .imgUpload a .img{
+            width: 80px;
+            height: 50px;
+            margin: 10px 0 0 0;
+        }
+
+        .imgUpload button{
+            height: 30px;
+            margin: 20px 4px 0 10px;
+        }
+
+        #totalTitle {
+            display: flex;
+            display: -webkit-flex;
+            flex-direction: column;
+        }
+
+        .file_div {
+            overflow: hidden;
+            width: 72px;
+        }
+    </style>
+</head>
+<body>
+<div class="content-wrap">
+    <div class="wrapper">
+
+
+    </div>
+</div>
+
+
+<div class="content-wrap">
+    <div class="wrapper" style="min-height:500px;">
+        <div class="col-md-12 form-horizontal option">
+            <label class="labelBtn" id="goBack"
+                   style="margin-left: 800px; margin-bottom:30px;background-color: #1890ff; color: #fff;">返回</label>
+        </div>
+        <section class="panel panel-form" id="panelSection">
+            <!--<input type="hidden" id="secondaryId" value="">-->
+            <!--<input type="hidden" id="secondaryStyle" value="${style}">-->
+            <!--<% for(i in language){ %>
+            <input type="hidden" class="secondaryLanguage" value=${i.language} name="languageList">
+            <% } %>-->
+            <div class="row">
+                <div class="col-lg-12 totalTitle" id="totalTitle">
+                    <!--<% for(i in language){ %>
+                    <div class="form-group form-horizontal">
+                        <label class="col-sm-2 control-label">${i.language}</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="totalTitle" placeholder="大标题">
+                        </div>
+                    </div>
+                    <% } %>-->
+                </div>
+                <div class="col-lg-12 secondaryList">
+                    <div class="btn btn-primary navbar-btn" id="addTabData"><i class="ti-plus"></i>添加标签</div>
+                    <div class="btn btn-primary navbar-btn" id="addItemData"><i class="ti-plus"></i>添加内容</div>
+                    <div class="btn btn-danger navbar-btn" id="deleteTab"><i class="ti-close"></i>删除标签</div>
+                    <ul class="tabTitle">
+                        <li>标签图片</li>
+                        <li>标签名称</li>
+                        <li>内容图片</li>
+                        <li>内容标题</li>
+                        <li>内容描述</li>
+                    </ul>
+                    <!--标签内容-->
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3"></div>
+                <div class="col-lg-6">
+                    <div class="form-group text-center">
+                        <label></label>
+                        <div>
+                            <button id="save" TYPE="button" class="btn btn-primary btn-block btn-lg btn-parsley"
+                                    data-loading-text="正在提交...">提 交
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="cloneTemplate" style="display: none;">
+                <ul class="tabContent">
+                    <li>
+                        <div class="file_content">
+                            <div class="file_div"><input type="file" name="secondary1" accept="image/*"  /></div>
+                        </div>
+                        <!--<#upload id="tabImg" name="secondary1" exts=".jpg,.jpeg,.gif,.png,.bmp" fdKey="pic"-->
+                        <!--btnText="上传图片" imgWidth="50" imgHeight="50" showImg="true" multi="false" />-->
+                        <!--<input type="hidden" class="uploadImg" value="">-->
+                    </li>
+                    <li class="tab_titleName">
+                        <!--<% for(i in language){ %>
+                        <div class="form-group">
+                            <span>${i.language}：</span>
+                            <input type="text" class="tabName" placeholder="标签名称">
+                        </div>
+                        <% } %>-->
+                    </li>
+                    <li>
+                        <div class="tabItem">
+                            <span class="deleteItem">X</span>
+                            <div class="itemUpload">
+                                <div class="file_content">
+                                    <div class="file_div"><input type="file" name="secondary" accept="image/*"  /></div>
+                                </div>
+                                <!--<#upload id="itemImg" name="secondary" exts=".jpg,.jpeg,.gif,.png,.bmp" fdKey="pic"-->
+                                <!--btnText="上传图片" imgWidth="50" imgHeight="50" showImg="true" multi="false" />-->
+                            </div>
+                            <div class="itemTitle">
+                                <!--<% for(i in language){ %>
+                                <div class="form-group">
+                                    <span>${i.language}：</span>
+                                    <input type="text" class="itemName" placeholder="内容标题">
+                                </div>
+                                <% } %>-->
+                            </div>
+                            <div class="itemContent">
+                                <!--<% for(i in language){ %>
+                                <div class="form-group">
+                                    <span>${i.language}：</span>
+                                    <input type="text" class="itemInfo" placeholder="内容描述">
+                                </div>
+                                <% } %>-->
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+    </div>
+</div>
+<!-- 删除选中用户 -->
+<div id="dialogDeleteCheck" class="modal fade bs-modal-lg" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">删除</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12 mb10">
+                        删除后无法恢复，确定删除已选记录吗？
+                    </div>
+                    <div class="col-xs-12">
+                        <ul id="checkedUser" class="list-group"></ul>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                <button id="ok" type="button" class="btn btn-primary">确 定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<a class="exit-offscreen"></a>
+
+<script src="js/secondary/secondary.js"></script>
+</body>
+</html>

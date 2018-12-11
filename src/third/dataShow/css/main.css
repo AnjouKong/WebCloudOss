@@ -1,0 +1,63 @@
+*{
+  box-sizing:border-box;
+}
+html,body{
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-size: 24px;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  background-image: url('../images/bg.jpg');
+  background-size: 100% 100%;
+  color: #fff;
+  /*background: #000;*/
+}
+/* 清除浮动 */
+.clear-fix:after {
+  content: " ";
+  display: block;
+  clear: both;
+}
+div#moveMap{
+  width: 800px;
+  height: 800px;
+  margin: 23px 0 0 200px;
+}
+div#pointMap{
+  width: 800px;
+  height: 800px;
+  margin: 23px auto;
+}
+
+.peopleSourcePage{
+  width: 1000px;
+  margin: 0 auto;
+  position: relative;
+}
+.peopleSourcePage #table{
+  position: absolute;
+  left: 60px;
+  top: 60px;
+}
+.peopleSourcePage #table ul{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border: 1px solid #46bee9;
+  border-bottom: 0;
+}
+.peopleSourcePage #table ul li{
+  padding: 1px 10px;
+  margin: 0;
+  font-size: 14px;
+  color: #46bee9;
+  border-bottom: 1px solid #46bee9;
+}
+.peopleSourcePage #table ul li span{
+  display: inline-block;
+}
+.peopleSourcePage #table ul li span.province{
+  width: 90px;
+}

@@ -1,0 +1,38 @@
+.datePublic {
+	margin-bottom: 25px;
+	font-size: 16px;
+}
+.datePublic button{
+	margin-right: 3px;
+}
+.datePublic .active{
+	color: #fff;
+  background-color: #108ee9;
+  border-color: #108ee9;
+}
+.data-total{
+	width: 100%;
+	overflow: hidden;
+  font-size: 16px;
+}
+.data-title{
+	width: 90px;
+	float: left;
+  text-align: left;
+}
+.data-info{
+	width: calc(100% - 90px);
+	float: left;
+  text-align: center;
+}
+.data-item{
+	width: 14.28%;
+	float: left;
+  cursor: pointer;
+}
+.data-info .active{
+	color: #1890ff;
+}
+.headTitle{
+	font-size: 18px;
+}
