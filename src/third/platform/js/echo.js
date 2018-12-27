@@ -29,8 +29,8 @@ $(function(){
         $("#textDetail").modal("hide");
     });
 });
-var currentId = window.location.search.split("=");
-$.post(base+"/op/ui/scene/content", {sceneId: currentId[currentId.length-1]}, function (data) {
+// var currentId = window.location.search.split("=");
+$.post(base+"/op/ui/scene/content", {sceneId: currentId}, function (data) {
     var data = data.data;
     setTimeout(function(){
         dataEcho(data);

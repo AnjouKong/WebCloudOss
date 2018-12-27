@@ -83,6 +83,8 @@ class customManage extends Component {
       data: {
         page,
         size,
+        sort: 'updateTime',
+        order: 'desc',
         type: 'custom',
         name: this.name,
         categoryId,

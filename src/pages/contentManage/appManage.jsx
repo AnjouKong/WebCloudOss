@@ -96,6 +96,8 @@ class appManage extends Component {
       data: {
         page,
         size,
+        sort: 'updateTime',
+        order: 'desc',
         type: 'app',
         name: this.name,
         categoryId,

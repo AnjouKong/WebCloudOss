@@ -83,6 +83,8 @@ class secondaryManage extends Component {
       data: {
         page,
         size,
+        sort: 'updateTime',
+        order: 'desc',
         type: 'secondary',
         name: this.name,
         categoryId,

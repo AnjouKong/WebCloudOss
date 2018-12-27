@@ -83,6 +83,8 @@ class videoManage extends Component {
       data: {
         page,
         size,
+        sort: 'updateTime',
+        order: 'desc',
         type: 'video',
         name: this.name,
         categoryId,

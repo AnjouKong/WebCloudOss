@@ -94,8 +94,8 @@ class List extends Component {
   getInfoList = () => {
     console.log(this.pager);
     const params = {
-      tenantId: JSON.parse(window.sessionStorage.getItem('UV_userInfo')).tenantId,
-      userId: JSON.parse(window.sessionStorage.getItem('UV_userInfo')).id,
+      tenantId: window.sessionStorage.getItem('UV_userInfo') ? JSON.parse(window.sessionStorage.getItem('UV_userInfo')).tenantId : '',
+      userId: window.sessionStorage.getItem('UV_userInfo') ? JSON.parse(window.sessionStorage.getItem('UV_userInfo')).id : '',
       size: this.pager.pageSize,
       page: this.pager.current,
       ...this.tableFilters,

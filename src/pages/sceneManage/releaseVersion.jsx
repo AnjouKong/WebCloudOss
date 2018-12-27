@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Modal, message, Switch, Select, Row, Col, Button, } from 'antd';
+import { Modal, message, Switch, Select, Row, Col, Button, Input, } from 'antd';
 import Utils from '../../common/Utils';
 
 const Option = Select.Option;
+const confirm = Modal.confirm;
 
 class releaseVersion extends Component {
   constructor(props) {
@@ -11,7 +12,6 @@ class releaseVersion extends Component {
       modalVisible: false,
       confirmLoading: false,
       currentId: '',
-      tenantData: [],
       groupData: [],
       deviceData: [],
       submitData: [],
@@ -44,34 +44,6 @@ class releaseVersion extends Component {
       const resData = res.data;
       this.setState({
         submitData: resData,
-      });
-    })
-    .catch(() => {
-    });
-  }
-  // 获取商户
-  getTenantList = () => {
-    Utils.request({
-      url: `${window.PAY_API_HOST}/op/system/tenant/tenants`,
-      method: 'get',
-      data: {}
-    })
-    .then(res => {
-      const resData = res.data;
-      const tenantList = [];
-      resData.map((item) => { // "/////"为了搜索名字然后取id
-        return tenantList.push(
-          <Option
-            key={item.id}
-            value={`${item.tenancyName}/////${item.id}`}
-            title={item.tenancyName}
-          >
-            {item.tenancyName}
-          </Option>
-        );
-      });
-      this.setState({
-        tenantData: tenantList,
       });
     })
     .catch(() => {
@@ -151,15 +123,18 @@ class releaseVersion extends Component {
     });
   }
   // 弹出框处理函数
-  showModal = (id) => {
+  showModal = (record) => {
+    // console.log(record);
     this.setState({
       modalVisible: true,
-      currentId: id,
+      currentId: record.id,
+      tenantId: record.tenantId,
+      tenantName: record.tenantName,
       groupValue: { key: '', label: '' },
       deviceValue: { key: '', label: '' },
     });
-    this.getPublicTenantList(id);
-    this.getTenantList();
+    this.getPublicTenantList(record.id);
+    this.getGroupList(record.tenantId);
     setTimeout(() => {
     }, 200);
   }
@@ -169,7 +144,7 @@ class releaseVersion extends Component {
     });
   }
   handleSubmit = () => {
-    console.log(JSON.stringify(this.state.submitData));
+    if (this.state.submitData.length === 0) return message.error('至少有一条数据才可以发布！');
     this.setState({
       confirmLoading: true,
     });
@@ -199,15 +174,18 @@ class releaseVersion extends Component {
     });
   }
   inputOnchange = (e, index) => {
-    this.state.submitData[index].view = e;
-    console.log('权限修改', this.state.submitData);
+    const { submitData } = this.state;
+    submitData[index].view = e;
+    this.setState({
+      submitData,
+    });
   }
   publishData = (value, type) => {
     switch (type) {
       case 'tenant':
         this.setState({
-          tenantId: value.key.split('/////')[1],
-          tenantName: value.label,
+          tenantId: this.state.tenantId,
+          tenantName: this.state.tenantName,
           groupId: '',
           groupName: '',
           deviceId: '',
@@ -239,14 +217,33 @@ class releaseVersion extends Component {
         break;
     }
   }
+  // 删除
+  delete = (index) => {
+    confirm({
+      title: '确认要删除吗?',
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        const { submitData } = this.state;
+        // console.log('删除：', index, submitData);
+        submitData.splice(index, 1);
+        this.setState({
+          submitData,
+        });
+      },
+      onCancel: () => {
+        // console.log('Cancel');
+      },
+    });
+  };
   addPublishList = () => {
     const { submitData } = this.state;
     this.publishSelData = [{
       tenantId: this.state.tenantId,
       tenantName: this.state.tenantName,
-      groupId: this.state.groupId,
+      groupId: this.state.groupId === '' ? null : this.state.groupId,
       groupName: this.state.groupName,
-      deviceId: this.state.deviceId,
+      deviceId: this.state.deviceId === '' ? null : this.state.deviceId,
       deviceName: this.state.deviceName,
       view: false,
     }];
@@ -257,7 +254,7 @@ class releaseVersion extends Component {
       });
       return;
     }
-    console.log(this.publishSelData);
+    // console.log(this.publishSelData);
     let repeat = false;
     for (let i = 0; i < submitData.length; i += 1) {
       if (submitData[i].tenantId === this.publishSelData[0].tenantId
@@ -277,17 +274,18 @@ class releaseVersion extends Component {
   }
   publishList = () => {
     const { submitData } = this.state;
-    console.log(submitData);
+    // console.log(submitData);
     return (
       submitData && submitData.map((item, index) => {
         const list = (
           <Row key={index}>
-            <Col span={5} offset={4} style={{ lineHeight: '30px' }}>{item.tenantName}</Col>
+            <Col span={5} offset={4} style={{ lineHeight: '30px' }}>{this.state.tenantName}</Col>
             <Col span={5} style={{ lineHeight: '30px' }}>{item.groupName}</Col>
             <Col span={5} style={{ lineHeight: '30px' }}>{item.deviceName}</Col>
-            <Col span={5}>
-              <Switch defaultChecked={item.view} onChange={e => this.inputOnchange(e, index)} />
+            <Col span={3}>
+              <Switch checked={item.view} onChange={e => this.inputOnchange(e, index)} />
             </Col>
+            <Col onClick={() => this.delete(index)} span={2} style={{ color: '#1890ff', cursor: 'pointer' }}>删除</Col>
           </Row>
         );
         return list;
@@ -296,7 +294,7 @@ class releaseVersion extends Component {
   }
 
   render() {
-    const { modalVisible, tenantData, groupData, deviceData, groupValue, deviceValue } = this.state;
+    const { modalVisible, groupData, deviceData, groupValue, deviceValue, tenantName } = this.state;
 
     return (
       <Modal
@@ -311,7 +309,7 @@ class releaseVersion extends Component {
         <Row>
           <Col span={4}></Col>
           <Col span={16}>
-            <span style={{ width: '33%', float: 'left', lineHeight: '30px' }}>选择商户：</span>
+            <span style={{ width: '33%', float: 'left', lineHeight: '30px' }}>商户：</span>
             <span style={{ width: '33%', float: 'left', lineHeight: '30px' }}>选择分组：</span>
             <span style={{ width: '33%', float: 'left', lineHeight: '30px' }}>选择终端：</span>
           </Col>
@@ -319,9 +317,7 @@ class releaseVersion extends Component {
         <Row>
           <Col span={4} style={{ textAlign: 'right', lineHeight: '30px' }}>选择发布对象：</Col>
           <Col span={16}>
-            <Select labelInValue showSearch style={{ width: '33%' }} onChange={e => this.publishData(e, 'tenant')}>
-              { tenantData }
-            </Select>
+            <Input disabled value={tenantName} style={{ width: '33%' }} />
             <Select value={groupValue} labelInValue style={{ width: '33%' }} onChange={e => this.publishData(e, 'group')}>
               { groupData }
             </Select>
@@ -339,7 +335,8 @@ class releaseVersion extends Component {
             <span style={{ width: '25%', float: 'left', lineHeight: '30px' }}>商户</span>
             <span style={{ width: '25%', float: 'left', lineHeight: '30px' }}>分组</span>
             <span style={{ width: '25%', float: 'left', lineHeight: '30px' }}>终端</span>
-            <span style={{ width: '25%', float: 'left', lineHeight: '30px' }}>是否授权</span>
+            <span style={{ width: '15%', float: 'left', lineHeight: '30px' }}>是否授权</span>
+            <span style={{ width: '10%', float: 'left', lineHeight: '30px' }}>操作</span>
           </Col>
         </Row>
         { this.publishList() }

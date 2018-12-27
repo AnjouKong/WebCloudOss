@@ -94,7 +94,7 @@ class editStrategyComponent extends Component {
     appList = [];
     appData.map((item, index) =>
       appList.push(
-        <Option key={index} value={item.packageName}>{item.label}</Option>
+        <Option key={index} value={item.packageName}>{`${item.label}/${item.packageName}`}</Option>
       )
     );
   };
@@ -104,7 +104,7 @@ class editStrategyComponent extends Component {
     appVersionList = [];
     appVersionData.map((item, index) =>
       appVersionList.push(
-        <Option key={index} value={item.versionCode}>{item.versionName}</Option>
+        <Option key={index} value={item.versionCode}>{`${item.versionName}/${item.versionCode}`}</Option>
       )
     );
   };
@@ -202,7 +202,7 @@ class editStrategyComponent extends Component {
   // 选择应用 获取应用版本
   handleAppSelectChange = (value, option) => {
     this.setState({
-      label: option.props.children,
+      label: option.props.children.split('/')[0],
       appVersionData: [],
     });
     this.props.form.setFieldsValue({
@@ -213,8 +213,14 @@ class editStrategyComponent extends Component {
   };
   // 获取应用版本名称code
   handleVersionChange = (value, option) => {
+    console.log(value);
+    console.log(option.props.children.split('/')[0]);
+    let code = '';
+    if (value && option) {
+      code = option.props.children.split('/')[0];
+    }
     this.setState({
-      versionName: option.props.children,
+      versionName: code,
     });
   };
 
@@ -263,36 +269,6 @@ class editStrategyComponent extends Component {
             </FormItem>
             <FormItem
               {...formItemLayout}
-              label="应用"
-              hasFeedback
-            >
-              {getFieldDecorator('packageName', {
-                rules: [
-                  { required: true, message: '请选择应用' },
-                ],
-              })(
-                <Select onChange={this.handleAppSelectChange}>
-                  { appList }
-                </Select>
-              )}
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="应用版本"
-              hasFeedback
-            >
-              {getFieldDecorator('versionCode', {
-                rules: [
-                  { required: true, message: '请选择应用版本' },
-                ],
-              })(
-                <Select onChange={this.handleVersionChange}>
-                  { appVersionList }
-                </Select>
-              )}
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
               label="商户"
               hasFeedback
             >
@@ -308,10 +284,40 @@ class editStrategyComponent extends Component {
             </FormItem>
             <FormItem label="安装/卸载" {...formItemLayout} >
               {getFieldDecorator('appAction', {
+                rules: [
+                  { required: true, message: '请选择策略行为' },
+                ],
               })(
                 <Select id="appAction" >
                   <Option value="install">安装</Option>
                   <Option value="remove">卸载</Option>
+                </Select>
+              )}
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              label="应用"
+              hasFeedback
+            >
+              {getFieldDecorator('packageName', {
+                rules: [
+                  { required: true, message: '请选择应用' },
+                ],
+              })(
+                <Select onChange={this.handleAppSelectChange} >
+                  { appList }
+                </Select>
+              )}
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              label="应用版本"
+              hasFeedback
+            >
+              {getFieldDecorator('versionCode', {
+              })(
+                <Select onChange={this.handleVersionChange} allowClear >
+                  { appVersionList }
                 </Select>
               )}
             </FormItem>
@@ -352,7 +358,7 @@ class editStrategyComponent extends Component {
               {getFieldDecorator('room', {
                 rules: [{ message: '请输入房间号' }],
               })(
-                <Input />
+                <Input placeholder="格式为：1501,1501-2000,1501-,-2000" />
               )}
             </FormItem>
             <FormItem

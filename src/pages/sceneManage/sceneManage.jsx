@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Layout, Breadcrumb, Table, Divider, Button, Input, Modal, message, } from 'antd';
+import PropTypes from 'prop-types';
+import { Layout, Breadcrumb, Table, Divider, Button, Input, Select, Modal, message, } from 'antd';
 import { Link } from 'react-router';
 import Utils from '../../common/Utils';
 import { ROLE_PERMISSIONS_VALUE } from '../../common/Constant';
@@ -12,29 +13,58 @@ import ViewVersion from './viewVersion';
 const { Content, Sider } = Layout;
 const confirm = Modal.confirm;
 const Search = Input.Search;
+const Option = Select.Option;
 
 let privileges = [];
 
 class imgManage extends Component {
+  static propTypes = {
+    location: PropTypes.shape({
+      query: PropTypes.shape({
+        tenantId: PropTypes.string,
+        sceneName: PropTypes.string,
+      }).isRequired
+    }).isRequired,
+  };
   constructor(props) {
     super(props);
+    console.log(this.props.location.query);
+    this.search = {
+      tenantId: this.props.location.query.tenantId ? this.props.location.query.tenantId.split('/////')[1] : '',
+    };
+    // console.log(this.search.tenantId);
+    this.sceneName = this.props.location.query.sceneName ? this.props.location.query.sceneName : '';
     this.state = {
       selectedRowKeys: [],
       current: 1,
+      tenantData: [],
+      searchTenantId: this.props.location.query.tenantId ? this.props.location.query.tenantId : '',
+      sceneName: this.sceneName,
       tableData: [],
       tableTotal: '',
       categoryId: '',
     };
-    this.tenantId = JSON.parse(window.sessionStorage.getItem('UV_userInfo')).tenantId;
-    this.name = '';
+    this.tenantId = window.sessionStorage.getItem('UV_userInfo') ? JSON.parse(window.sessionStorage.getItem('UV_userInfo')).tenantId : null;
+
+
     this.columns = [{
       title: '名称',
       dataIndex: 'name',
       key: 'name',
     }, {
+      title: '商户',
+      dataIndex: 'tenantName',
+      key: 'tenantName',
+
+    }, {
       title: '备注',
       dataIndex: 'remarks',
       key: 'remarks',
+
+    }, {
+      title: '更新时间',
+      dataIndex: 'updateTime',
+      key: 'updateTime',
 
     }, {
       title: '操作',
@@ -44,7 +74,7 @@ class imgManage extends Component {
         <span>
           {
             privileges.indexOf(ROLE_PERMISSIONS_VALUE.SceneManage.btn[6]) > -1 &&
-            <Link to={{ pathname: '/sceneManage/layout', query: { id: record.key } }}>配置场景</Link>
+            <Link to={{ pathname: '/sceneManage/layout', query: { id: JSON.stringify({ id: record.key, tenantId: this.state.searchTenantId, sceneName: this.sceneName }) } }}>配置场景</Link>
           }
           {
             privileges.indexOf(ROLE_PERMISSIONS_VALUE.SceneManage.btn[7]) > -1 &&
@@ -53,7 +83,7 @@ class imgManage extends Component {
           {
             privileges.indexOf(ROLE_PERMISSIONS_VALUE.SceneManage.btn[7]) > -1 &&
             !this.tenantId
-            ? <a onClick={() => this.$releaseVersion.showModal(record.key)}>发布新版本</a>
+            ? <a onClick={() => this.$releaseVersion.showModal(record)}>发布新版本</a>
             : <a onClick={() => this.releaseVersion(record.key)}>发布新版本</a>
           }
           {
@@ -89,13 +119,45 @@ class imgManage extends Component {
     }];
   }
   componentDidMount() {
+    this.getTenantList();
     this.getInfoList('1', '10');
   }
   onSearchChange = (value) => {
-    console.log(value);
-    this.name = value;
+    console.log(value.target.value);
+    this.sceneName = value.target.value;
+    this.setState({
+      sceneName: this.sceneName,
+    });
     this.getInfoList('1', '10');
   };
+  // 获取商户
+  getTenantList = () => {
+    Utils.request({
+      url: `${window.PAY_API_HOST}/op/system/tenant/tenants`,
+      method: 'get',
+      data: {}
+    })
+      .then(res => {
+        const resData = res.data;
+        const tenantList = [];
+        resData.map((item) => { // "/////"为了搜索名字然后取id
+          return tenantList.push(
+            <Option
+              key={item.id}
+              value={`${item.tenantName}/////${item.id}`}
+              title={item.tenantName}
+            >
+              {item.tenantName}
+            </Option>
+          );
+        });
+        this.setState({
+          tenantData: tenantList,
+        });
+      })
+      .catch(() => {
+      });
+  }
   // 获取信息列表接口
   getInfoList = (page, size, categoryId) => {
     this.setState({ loading: true });
@@ -105,10 +167,11 @@ class imgManage extends Component {
       data: {
         page,
         size,
-        name: this.name,
+        name: this.sceneName,
         categoryId,
-        tenantId: this.tenantId,
-        sort: 'createTime',
+        tenantId: this.tenantId ? this.tenantId : this.search.tenantId,
+        isView: this.tenantId ? true : '',
+        sort: 'updateTime',
         order: 'desc',
       }
     })
@@ -137,6 +200,21 @@ class imgManage extends Component {
     });
     this.getInfoList(page, pageSize, this.state.categoryId);
   }
+  // 查询条件
+  searchOnChange = (value, type) => {
+    console.log(value, type);
+    switch (type) {
+      case 'tenantId':
+        this.search.tenantId = value ? value.split('/////')[1] : '';
+        this.setState({
+          searchTenantId: value,
+        });
+        this.getInfoList('1', '10');
+        break;
+      default:
+        break;
+    }
+  };
   // 商户发布
   releaseVersion = (sceneId) => {
     confirm({
@@ -205,12 +283,11 @@ class imgManage extends Component {
   }
 
   render() {
-    const { current, tableData, tableTotal, categoryId, } = this.state;
+    const { current, tenantData, tableData, tableTotal, categoryId, sceneName, searchTenantId } = this.state;
     const userInfo = JSON.parse(window.sessionStorage.getItem('UV_userInfo'));
     if (userInfo && userInfo.privileges) {
       privileges = userInfo.privileges;
     }
-    console.log(!this.tenantId);
     return (
       <Layout>
         <Breadcrumb style={{ margin: '12px 0' }}>
@@ -236,9 +313,16 @@ class imgManage extends Component {
                 <Search
                   style={{ width: 220, marginRight: 20, float: 'right' }}
                   placeholder="输入名称"
-                  onSearch={this.onSearchChange}
+                  value={sceneName}
+                  onChange={this.onSearchChange}
                   enterButton
                 />
+                {
+                  !this.tenantId &&
+                  <Select showSearch allowClear style={{ width: 240, marginRight: 20, float: 'right' }} value={searchTenantId} onChange={value => this.searchOnChange(value, 'tenantId')}>
+                    { tenantData }
+                  </Select>
+                }
               </div>
               <Table
                 columns={this.columns}

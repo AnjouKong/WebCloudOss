@@ -221,7 +221,10 @@ class editContent extends Component {
                 >
                   {getFieldDecorator('flag', {
                   })(
-                    <Input />
+                    <Select>
+                      <Option value="launcher">launcher</Option>
+                      <Option value="vod">vod</Option>
+                    </Select>
                   )}
                 </FormItem>
             }

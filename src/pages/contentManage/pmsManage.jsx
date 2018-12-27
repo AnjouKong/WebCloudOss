@@ -55,6 +55,8 @@ class pmsManage extends Component {
       data: {
         page,
         size,
+        sort: 'updateTime',
+        order: 'desc',
         type: 'pms',
         name: this.name,
       }

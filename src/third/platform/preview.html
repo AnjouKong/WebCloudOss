@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html class="signin no-js" lang="${lang!}">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="${AppName!}">
+    <title>历史版本预览</title>
+    <link rel="stylesheet" href="base/bootstrap.min.css">
+    <link rel="stylesheet" href="css/mainDrag.css">
+    <script type="text/javascript" src="base/jquery-1.11.1.min.js"></script>
+    <script src="base/jquery.SuperSlide.2.1.1.js"></script>
+</head>
+<body>
+    <div class="content-wrap">
+        <div style="width: 1200px;margin: 10px auto;">
+            <div class="btn-group tool-button">
+                <a class="btn btn-primary navbar-btn" href="#" id="goHidden">返回</a>
+            </div>
+        </div>
+        <div class="wrapper">
+            <input type="hidden" id="sceneId" value="${sceneId}"/>
+            <input type="hidden" id="type" value="${type}"/>
+
+            <div class="drag"></div>
+
+            <!-- 图片或图片集 -->
+            <div class="imgText">
+                <div class="bd">
+                    <ul></ul>
+                </div>
+            </div>
+            <!-- 自定义媒资列表 -->
+            <div class="mediaSlide">
+                <div class="bd">
+                    <ul></ul>
+                </div>
+                <div class="hd">
+                    <ul></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+<style>
+    .drag{ width:800px; height:450px; overflow:hidden; position:relative; border: 1px solid #333; font-size: 12px; margin: 10px auto; background-size: 100% 100%;}
+    /* 图文页展示 */
+    .imgText,.mediaSlide,.mediaDetails { width: 1200px; height: 675px; border: 1px solid #333; font-size: 12px;background: #000; position: absolute; overflow: hidden; display: none; z-index: 100; }
+    /*.imgText .tempWrap{width: 100% !important; height: 100%;}*/
+    .imgText .bd { width: 100%; height: 100%; position: relative;}
+    .imgText .bd ul { width: 100%; height: 100%; padding: 0; margin: 0; }
+    .imgText .bd ul li { width: 100%; height: 100%; float: left; }
+    .imgText .bd ul li img { width: 100%; height: 100%; }
+    /*电影列表*/
+    .mediaSlide,.mediaDetails { background: url("${base!}/static/img/mediaBG.png") no-repeat 100% 100%; }
+    .mediaSlide .bd { width: 80%; height: 100%; float: right; color: #fff; font-size: 1.2rem; position: relative; }
+    .mediaSlide .bd ul { width:100%; height: 100%; padding: 0; margin: 0;}
+    .mediaSlide .bd ul li { width:102%; height: 100%; overflow:hidden; text-align:center; }
+    .mediaSlide .bd ul li h3{ width: 100%; height: 45px; line-height: 45px; text-align: left; padding: 0 33px 0 35px; font-size: 1.8rem; font-weight: normal; margin: 0; }
+    .mediaSlide .bd ul li h3 span{ float: right; font-size: 1.8rem; margin-right: 20px; }
+    .mediaSlide .bd ul li ul.lists{ width: 100%; height: calc(100% - 60px); overflow: auto; padding: 0 7px; }
+    .mediaSlide .bd ul li ul.lists li{ width: 25%; height: 45%; float: left; padding: 0 7px; position: relative; text-align: center; }
+    .mediaSlide .bd ul li ul.lists li img{ width: 80%; height: calc(100% - 50px); }
+    .mediaSlide .bd ul li ul.lists li p{ width: 100%; height: 50px; line-height: 50px; color: #ddd; margin: 0; font-size: 1.6rem; }
+    .mediaSlide .hd { width: 20%; height: 100%; float: left; overflow: hidden; padding: 55px 0; font-size: 1.6rem; border-right: 1px solid #fff; }
+    .mediaSlide .hd ul { width: calc(100% + 17px); height: 100%; padding: 0;margin: 0;color: #fff; overflow: auto;}
+    .mediaSlide .hd ul li { margin: 0 auto; cursor:pointer; height: 70px; line-height: 70px; text-align: center; border-radius: 5px; }
+    .mediaSlide .hd ul .on { color: #fff; background: url("${base!}/static/img/listfocus.png") no-repeat center 100%; background-size: 60% 100%; }
+    /* 电影详情 */
+    .mediaDetails{ z-index: 13; }
+    .mediaDetails h3{ width: 100%; height: 50px; line-height: 50px; margin: 0; padding: 0 50px; color: #eee;font-size: 2rem; }
+    .mediaOn{ width: 100%; height: 55%; display: block; padding: 40px 50px 0; }
+    .onLeft{ width: 28%; height: 100%; float: left; }
+    .onRight{ float: left; width: 72%; height: 100%; color: #fdfbfb; position: relative; }
+    .onRight h3{ width: 100%; height: 27px; text-align: left; font-size: 2.2rem; font-weight: normal; padding: 0;line-height: 1.1; }
+    .onRight h3 span{ float: right; font-size: 1.6rem; }
+    .onRight p{ font-size: 1.6rem; margin: 5px 0; overflow: hidden; }
+    .onRight p label{ width: 85px; float: left; font-weight: normal; }
+    .onRight p span{ width: calc(100% - 85px); float: left; }
+    .onRight .tryBuy{ position: absolute; bottom: 0; }
+    .onRight button{ width: 120px; height: 50px; border: 0; background: url("${base!}/static/img/listfocus.png") no-repeat center 100%; background-size: 100% 100%; font-size: 1.6rem; }
+    .mediaDown{ width: calc(100% - 100px); height: calc(45% - 50px); padding: 0 0 20px; white-space: nowrap; overflow: auto; overflow-y: hidden; margin: 0 0 0 50px; }
+    .mediaDown li{ display: inline-block; width: 160px; overflow: hidden; margin-right: 25px; position: relative; }
+    .mediaDown li p{ width: 100%; height: 30px; background: rgba(0,0,0,0.7); position: absolute; bottom: 0; color: #ddd; font-size: 1.2rem; line-height: 30px; text-align: center; margin: 0; }
+</style>
+<script type="text/javascript">
+    //  相应放大多少
+    var multiple = 1.5;
+    var type = getQueryString('type');
+    var currentId = getQueryString('id');
+    console.log(type);
+    console.log(currentId);
+    $(document).ready(function () {
+        // var currentId = window.location.search.split("=");
+        switch (type) {
+          case 'historyVersion' :
+            $.post("/op/ui/scene/preview", {id: currentId}, function (data) {
+              var data = data.data;
+              preview(JSON.parse(data));
+            });
+            break;
+          case 'nowRelease' :
+            $.post("/op/ui/scene/releasePreview", {id: currentId}, function (data) {
+              var data = data.data;
+              preview(JSON.parse(data));
+            });
+            break;
+          default:
+            break;
+        }
+
+
+    });
+    function preview(data){
+      console.log(data);
+      if(data != null){
+        var dragStyle = data.style; // 容器drag的样式
+        $(".drag").css({
+          "height":(dragStyle.height)*multiple,
+          "width":(dragStyle.width)*multiple,
+          "top":"0",
+          "left":"0",
+          "font-size":dragStyle.fontSize,
+          "font-family":dragStyle.fontFamily,
+          "color":dragStyle.fontColor,
+          "background-color":dragStyle.backGroupColor,
+          "background-image":"url("+dragStyle.backGroupImage+")"
+        });
+        var subContainer = data.subContainer;
+        for(var s = 0; s < subContainer.length; s++){
+          var dragBoxStyle = subContainer[s].style; // 挂件父级dragging的样式
+          //  多语言name 对象
+          var dragBoxNames = subContainer[s].name;
+          var disDragBoxName;
+          for(var keyd in dragBoxNames){
+            if(keyd == "zh-Hans"){
+              disDragBoxName = dragBoxNames[keyd];
+              break;
+            }else{
+              disDragBoxName = dragBoxNames[keyd];
+            }
+          };
+          $(".drag").append("<div class='dragBox addDragTo' type='"+subContainer[s].uiClassID+"' " +
+            "style='border:0;font-size:"+dragBoxStyle.fontSize+";color:"+dragBoxStyle.fontColor+";background-color:"+dragBoxStyle.backGroupColor+";background-image:url("+ dragBoxStyle.backGroupImage+");width:" + (dragBoxStyle.width)*multiple + "px;height:" + (dragBoxStyle.height)*multiple + "px;left:"+(dragBoxStyle.parentLeft)*multiple+"px;top:"+(dragBoxStyle.parentTop)*multiple+"px;'></div>");
+          if(disDragBoxName!=null && $(".dragBox.addDragTo").attr("type")!= "PanelUI" ){
+            $(".dragBox.addDragTo").append("<p>"+disDragBoxName+"</p>");
+            $(".dragBox.addDragTo>p").css("color",dragBoxStyle.fontColor);
+          };
+          if(subContainer[s].subContainer != ""){
+            if(subContainer[s].subContainer[0].uiClassID == "PendantUI"){  //挂件
+              // console.log("这个是挂件");
+              var dragSub = subContainer[s].subContainer;
+              for(var d = 0; d < dragSub.length; d++){
+                var dragSubStyle = dragSub[d].style;
+                $(".dragBox.addDragTo").append("<div type='"+dragSub[d].pendantType+"' class='pendantChild' " +
+                  "style='width:" + (dragSubStyle.width)*multiple + "px;height:" + (dragSubStyle.height)*multiple + "px;left:"+(dragSubStyle.parentLeft)*multiple+"px;top:"+(dragSubStyle.parentTop)*multiple+"px;color:"+dragSubStyle.fontColor+";font-size:"+dragSubStyle.fontSize+";'> " +
+                  "<p style='font-size:14px;'>"+dragSub[d].pendantType+"</p>" +
+                  "</div>");
+                if(dragSubStyle.icon != ""){
+                  var iconPosition = dragSubStyle.iconPosition;
+                  var positionSel;
+                  switch (iconPosition) {
+                    case "top":
+                      $(".dragBox.addDragTo").find(".pendantChild:last-child p").css({"width":"100%","top":(parseInt(dragSubStyle.iconHeight)+parseInt(dragSubStyle.iconSpacing))*multiple+"px","left":"0"});
+                      positionSel = "top: 0;left: 50%;margin-left: -"+(parseInt(dragSubStyle.iconWidth)/2)*multiple+"px;";
+                      break;
+                    case "bottom":
+                      $(".dragBox.addDragTo").find(".pendantChild:last-child p").css({"width":"100%","bottom":(parseInt(dragSubStyle.iconHeight)+parseInt(dragSubStyle.iconSpacing))*multiple+"px","left":"0"});
+                      positionSel = "bottom: 0;left: 50%;margin-left: -"+(parseInt(dragSubStyle.iconWidth)/2)*multiple+"px;";
+                      break;
+                    case "left":
+                      $(".dragBox.addDragTo").find(".pendantChild:last-child p").css({"top":"0","left":(parseInt(dragSubStyle.iconWidth)+parseInt(dragSubStyle.iconSpacing))*multiple+"px","line-height":(dragSubStyle.height)*multiple+"px"});
+                      positionSel = "top: 50%;left: 0;margin-top: -"+(parseInt(dragSubStyle.iconHeight)/2)*multiple+"px;";
+                      break;
+                    case "right":
+                      $(".dragBox.addDragTo").find(".pendantChild:last-child p").css({"top":"0","right":(parseInt(dragSubStyle.iconWidth)+parseInt(dragSubStyle.iconSpacing))*multiple+"px","line-height":(dragSubStyle.height)*multiple+"px"});
+                      positionSel = "top: 50%;right: 0;margin-top: -"+(parseInt(dragSubStyle.iconHeight)/2)*multiple+"px;";
+                      break;
+                  };
+                  $(".dragBox.addDragTo").find(".pendantChild:last-child").append("<img src='"+dragSubStyle.icon+"' style='width:"+(dragSubStyle.iconWidth)*multiple+"px;height:"+(dragSubStyle.iconHeight)*multiple+"px;"+positionSel+"' />");
+                }else{
+                  $(".dragBox.addDragTo").find(".pendantChild:last-child p").css({"width":"100%","top":"0","left":"0"});
+                };
+              };
+              $(".drag").find(".dragBox").removeClass("addDragTo");
+            }else if(subContainer[s].subContainer[0].uiClassID == "ColumnUI"){
+              // console.log("这个是导航");
+              var fullSub = subContainer[s].subContainer;
+              for(var f = 0; f < fullSub.length; f++){
+                //  多语言name 对象
+                var fullName = fullSub[f].name;
+                var disName,disKey;
+                for(var key in fullName){
+                  if(key == "zh-Hans"){
+                    disKey = key;
+                    disName = fullName[key];
+                    break;
+                  }else{
+                    disKey = key;
+                    disName = fullName[key];
+                  }
+                };
+                var columnStyle = fullSub[f].style; // 挂件父级hdDown li的样式
+                var columnRule = (fullSub[f].sceneEvents[0]) == undefined ? "" : fullSub[f].sceneEvents[0].rule;
+                var columnEventID = (fullSub[f].sceneEvents[0]) == undefined ? "" : fullSub[f].sceneEvents[0].eventID.split("Event")[0];
+                var columnFocus = fullSub[f].onfocusStyle; // 聚焦
+                if(fullSub[f].sceneEvents[0] && fullSub[f].sceneEvents[0].eventID != "undefinedEvent"){
+                  // 栏目
+                  $(".dragBox.addDragTo").append("<div class='columnBox' id='"+fullSub[f].id+"' style='font-size:"+columnStyle.fontSize+";color:"+columnStyle.fontColor+";background-color:"+columnStyle.backGroupColor+";background-image:url("+ columnStyle.backGroupImage+");width:"+(columnStyle.width)*multiple+"px;height:"+(columnStyle.height)*multiple+"px;top:"+(columnStyle.parentTop)*multiple+"px;left:"+(columnStyle.parentLeft)*multiple+"px;' " +
+                    "rule='"+columnRule+"' ruleVal='"+columnEventID+"' nameList='"+JSON.stringify(fullName)+"' key='"+disKey+"' "+
+                    "focusBG='"+columnFocus.backGroupColor+"' focusColor='"+columnFocus.fontColor+"' focusBGImg='"+columnFocus.backGroupImage+"' focusSize='"+columnFocus.fontSize+"' >" +
+                    "<p class='handle move'>"+disName+"</p>" +
+                    "</div>");
+                  disName = "";
+                  // 栏目点击事件为容器
+                  if(fullSub[f].sceneEvents[0].rule.id){
+                    var sceneStyle = fullSub[f].sceneEvents[0].rule.style; // 推荐位集合
+                    // 当前容器的类型
+                    var speciesType = $("div[data-num='index"+f+"']").attr("ruleval") == "Recommended" ? "RecommendedUI":"MenuItemUI";
+                    $(".drag").append("<div class='speciesBox addSpeciesTo "+fullSub[f].id+"' type='"+speciesType+"' " +
+                      "style='font-size:"+sceneStyle.fontSize+";color:"+sceneStyle.fontColor+";background-color:"+sceneStyle.backGroupColor+";background-image:url("+ sceneStyle.backGroupImage+");width:" + (sceneStyle.width)*multiple + "px;height:" + (sceneStyle.height)*multiple + "px;left:"+(sceneStyle.parentLeft)*multiple+"px;top:"+(sceneStyle.parentTop)*multiple+"px;'></div>");
+                    var sceneList = fullSub[f].sceneEvents[0].rule.subContainer; // 推荐位遍历
+                    for(var e = 0; e < sceneList.length; e++){
+                      //  多语言name 对象
+                      var sceneNames = sceneList[e].name;
+                      var disSceneName,key;
+                      for(var keys in sceneNames){
+                        if(keys == "zh-Hans"){
+                          key = keys;
+                          disSceneName = sceneNames[keys];
+                          break;
+                        }else{
+                          key = keys;
+                          disSceneName = sceneNames[keys];
+                        }
+                      };
+                      var sceneLiList = sceneList[e].style; // 静态
+                      var sceneRule = (sceneList[e].sceneEvents[0]) == undefined ? "" : sceneList[e].sceneEvents[0].rule;
+                      var sceneEventID = (sceneList[e].sceneEvents[0]) == undefined ? "" : sceneList[e].sceneEvents[0].eventID.split("Event")[0];
+                      if(sceneList[e].uiClassID == "RecommendedUI"){   // 推荐位
+                        $(".speciesBox.addSpeciesTo").append(
+                          "<div class='recommendBox childBox' style='font-size:"+sceneLiList.fontSize+";color:"+sceneLiList.fontColor+";background-color:"+sceneLiList.backGroupColor+";background-image:url("+sceneLiList.backGroupImage+");width:"+(sceneLiList.width)*multiple+"px; height:"+(sceneLiList.height)*multiple+"px;left:"+(sceneLiList.parentLeft)*multiple+"px; top:"+(sceneLiList.parentTop)*multiple+"px;' " +
+                          "rule='"+sceneRule+"' ruleVal='"+sceneEventID+"' nameList='"+JSON.stringify(sceneNames)+"' key='"+key+"'>"+
+                          "<p class='childEdit'>"+disSceneName+"</p>" +
+                          "</div>");
+                      }else if(sceneList[e].uiClassID == "MenuItemUI"){    // 菜单
+                        $(".speciesBox.addSpeciesTo").append(
+                          "<div class='menuBox childBox' style='font-size:"+sceneLiList.fontSize+";color:"+sceneLiList.fontColor+";background-color:"+sceneLiList.backGroupColor+";background-image:url("+sceneLiList.backGroupImage+");width:"+(sceneLiList.width)*multiple+"px; height:"+(sceneLiList.height)*multiple+"px;margin-bottom:"+(fullSub[f].sceneEvents[0].rule.itemSpacing)*multiple+"px;' "+
+                          "rule='"+sceneRule+"' ruleVal='"+sceneEventID+"' nameList='"+JSON.stringify(sceneNames)+"' key='"+key+"'>"+
+                          "<p class='move'>"+disSceneName+"</p>" +
+                          "</div>");
+                      }else if(sceneList[e].uiClassID == "PanelUI"){    // 面板
+                        $(".speciesBox.addSpeciesTo").append(
+                          "<div class='dragBox childBox addDragTo' style='font-size:"+sceneLiList.fontSize+";color:"+sceneLiList.fontColor+";background-color:"+sceneLiList.backGroupColor+";background-image:url("+ sceneLiList.backGroupImage+");width:" + (sceneLiList.width)*multiple + "px;height:" + (sceneLiList.height)*multiple + "px;left:"+(sceneLiList.parentLeft)*multiple+"px;top:"+(sceneLiList.parentTop)*multiple+"px;'>" +
+                          "</div>");
+                        var recomBox = sceneList[e].subContainer;
+                        for(var r= 0; r < recomBox.length; r++){
+                          var recomBoxStyle = recomBox[r].style;
+                          $(".speciesBox").find(".dragBox.addDragTo").append("<div id='"+recomBox[r].id+"' ondblclick='pendantDouble()' type='"+recomBox[r].pendantType+"' class='pendantChild' " +
+                            "style='width:" + (recomBoxStyle.width)*multiple + "px;height:" + (recomBoxStyle.height)*multiple + "px;left:"+(recomBoxStyle.parentLeft)*multiple+"px;top:"+(recomBoxStyle.parentTop)*multiple+"px;color:"+recomBoxStyle.fontColor+";font-size:"+recomBoxStyle.fontSize+";'> " +
+                            "<p style='font-size:14px;'>"+recomBox[r].pendantType+"</p>" +
+                            "</div>");
+                          if(recomBoxStyle.icon != ""){
+                            var iconPosition = recomBoxStyle.iconPosition;
+                            var positionSel;
+                            switch (iconPosition) {
+                              case "top":
+                                $(".dragBox.addDragTo").find(".pendantChild:last-child p").css({"width":"100%","top":(parseInt(recomBoxStyle.iconHeight)+parseInt(recomBoxStyle.iconSpacing))*multiple+"px","left":"0"});
+                                positionSel = "top: 0;left: 50%;margin-left: -"+(parseInt(recomBoxStyle.iconWidth)/2)*multiple+"px;";
+                                break;
+                              case "bottom":
+                                $(".dragBox.addDragTo").find(".pendantChild:last-child p").css({"width":"100%","bottom":(parseInt(recomBoxStyle.iconHeight)+parseInt(recomBoxStyle.iconSpacing))*multiple+"px","left":"0"});
+                                positionSel = "bottom: 0;left: 50%;margin-left: -"+(parseInt(recomBoxStyle.iconWidth)/2)*multiple+"px;";
+                                break;
+                              case "left":
+                                $(".dragBox.addDragTo").find(".pendantChild:last-child p").css({"top":"0","left":(parseInt(recomBoxStyle.iconWidth)+parseInt(recomBoxStyle.iconSpacing))*multiple+"px","line-height":(recomBoxStyle.height)*multiple+"px"});
+                                positionSel = "top: 50%;left: 0;margin-top: -"+(parseInt(recomBoxStyle.iconHeight)/2)*multiple+"px;";
+                                break;
+                              case "right":
+                                $(".dragBox.addDragTo").find(".pendantChild:last-child p").css({"top":"0","right":(parseInt(recomBoxStyle.iconWidth)+parseInt(recomBoxStyle.iconSpacing))*multiple+"px","line-height":(recomBoxStyle.height)*multiple+"px"});
+                                positionSel = "top: 50%;right: 0;margin-top: -"+(parseInt(recomBoxStyle.iconHeight)/2)*multiple+"px;";
+                                break;
+                            };
+                            $(".dragBox.addDragTo").find(".pendantChild:last-child").append("<img src='"+recomBoxStyle.icon+"' style='width:"+(recomBoxStyle.iconWidth)*multiple+"px;height:"+(recomBoxStyle.iconHeight)*multiple+"px;"+positionSel+"' />");
+                          }else{
+
+                            $(".dragBox.addDragTo").find(".pendantChild:last-child p").css({"width":"100%","top":"0","left":"0"});
+                          };;
+                        };
+                        $(".speciesBox").find(".dragBox").removeClass("addDragTo");
+                      };
+                      disSceneName = "";
+                    }
+                    $(".drag").find(".speciesBox").removeClass("addSpeciesTo");
+                  };
+                }else{
+                  $(".dragBox.addDragTo").append("<div class='columnBox' id='"+fullSub[f].id+"' style='font-size:"+columnStyle.fontSize+";color:"+columnStyle.fontColor+";background-color:"+columnStyle.backGroupColor+";background-image:url("+ columnStyle.backGroupImage+");width:"+(columnStyle.width)*multiple+"px;height:"+(columnStyle.height)*multiple+"px;top:"+(columnStyle.parentTop)*multiple+"px;left:"+(columnStyle.parentLeft)*multiple+"px;'>" +
+                    "<p class='handle move'>"+disName+"</p>" +
+                    "</div>");
+                  disName = "";
+                }
+                $(".speciesBox").hide();
+              };
+              $(".drag").find(".dragBox").removeClass("addDragTo");
+              // tab标签切换
+              $(".dragBox").on("click",".columnBox",function(){
+                $(".speciesBox").hide();
+                var dataNum = $(this).attr("id");
+                $(".drag").find("."+dataNum).show();
+                $(".dragBox").find(".columnBox").removeClass("addColumnTo");
+                $(this).parent().css("z-index","99");
+                var columnNum =  $(".dragBox").find(".columnBox");
+                for(var i = 0; i < columnNum.length; i++){
+                  var cutover = fullSub[i].style;
+                  columnNum.eq(i).css({"font-size": cutover.fontSize,"color":cutover.fontColor,"background-color": cutover.backGroupColor,"background-image":"url("+ cutover.backGroupImage+")" })
+                };
+                $(this).css({"font-size": $(this).attr("focusSize"),"color":$(this).attr("focusColor")==""?"#fff":"#"+$(this).attr("focusColor"),"background-color": $(this).attr("focusBG")==""?"":"#"+$(this).attr("focusBG"),"background-image":"url("+$(this).attr('focusBGImg')+")" })
+              });
+            }
+          }
+        }
+      };
+      $(".dragBox .columnBox").eq(0).trigger("click");
+      $(".speciesBox .childBox,.dragBox .columnBox").on("click", function(){
+        // 图片或图片集
+        if($(this).attr("ruleVal") == "image" || $(this).attr("ruleVal") == "imageList" ){
+          $.post("/op/ui/content/load", {"id":$(this).attr("rule"),"eventType":$(this).attr("ruleVal")+"Event","language": $(this).attr("key")}, function (data) {
+            if(data.data != undefined){
+              $(".drag").append($(".imgText").clone());
+              $(".drag .imgText").show();
+              var imgList = data.data;
+              for(var n = 0; n < imgList.length; n++){
+                $(".drag .imgText ul").append("<li><img src='"+imgList[n].url+"' /></li>")
+              };
+              jQuery(".imgText").slide({mainCell:".bd ul",autoPlay:true,delayTime:300});
+            }
+          });
+
+        }
+      });
+      // 返回
+      $("#goHidden").on("click", function(){
+        $(".drag .imgText").remove();
+        if($(".mediaDetails").css("display") == "block"){
+          $(".drag .mediaDetails").remove();
+        }else{
+          $(".drag .mediaSlide").remove();
+        }
+      });
+    }
+
+
+    // 获取URL中参数
+    // 参数 name 链接中的参数名称
+    // 返回 参数值
+    function getQueryString(name) {
+      var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+      var queryStr = decodeURI(window.location.search.substr(1));
+      var matchStr = queryStr.match(reg);
+      if (matchStr != null) {
+        return (matchStr[2]);
+      }
+      return null;
+    }
+</script>
+<!--script-->
+</body>
+</html>
+
+

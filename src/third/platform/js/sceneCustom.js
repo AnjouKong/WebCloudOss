@@ -396,7 +396,6 @@ $(function(){
         for(var d = 0; d < dragPic.length; d++){
             var totalPic = $(".languagePic .uploadImg");
             for(var e = 0; e < totalPic.length; e++){
-                console.log(totalPic[e]);
                 if(dragPic[d].language == totalPic.eq(e).attr("type") && dragPic[d].src != undefined){
                     totalPic.eq(e).append(
                         '<p class="imgUpload">已上传：' +

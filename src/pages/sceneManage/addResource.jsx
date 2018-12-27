@@ -62,7 +62,7 @@ class addResource extends Component {
     console.log(info);
   }
   onSelect = (selectedKeys) => {
-    console.log(selectedKeys);
+    // console.log(selectedKeys);
     this.setState({
       selectedKeys,
       categoryId: selectedKeys,
@@ -177,6 +177,7 @@ class addResource extends Component {
             contentId: `${resData[i].id}`,
             name: `${resData[i].name}`,
             languages: resData[i].uiContentLanguages,
+            flag: `${resData[i].flag}`,
             eventType: 'themePackage',
           });
           break;

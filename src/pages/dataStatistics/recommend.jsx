@@ -41,7 +41,7 @@ class recommend extends Component {
       lineName: '',
     };
 
-    this.tenantId = JSON.parse(window.sessionStorage.getItem('UV_userInfo')).tenantId;
+    this.tenantId = window.sessionStorage.getItem('UV_userInfo') ? JSON.parse(window.sessionStorage.getItem('UV_userInfo')).tenantId : '';
   }
 
   // 初始化

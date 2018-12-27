@@ -483,7 +483,7 @@ function initDataTableMedia() {
                 data: {
                     size: data.length,
                     page: parseInt(data.start)/10 + 1,
-                    subjectName: $('#mediaName_search').val(),
+                    seriesName: $('#mediaName_search').val(),
                 },
                 success: function (result) {
                     var returnData = {

@@ -109,7 +109,7 @@ class addUserComponent extends Component {
       url: `${window.PAY_API_HOST}/op/system/role/get`,
       method: 'post',
       data: {
-        roleId: JSON.parse(window.sessionStorage.getItem('UV_userInfo')).roleId
+        roleId: window.sessionStorage.getItem('UV_userInfo') ? JSON.parse(window.sessionStorage.getItem('UV_userInfo')).roleId : '',
       }
     })
     .then(res => {
@@ -121,7 +121,7 @@ class addUserComponent extends Component {
     })
     .catch(() => {
     });
-  }
+  };
 
   // 计算当前节点的所有父节点
   getNodes = (json, nodeId) => {

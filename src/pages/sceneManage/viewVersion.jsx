@@ -29,7 +29,7 @@ class viewVersion extends Component {
       key: 'operation',
       render: (id, record) => (
         <span>
-          <a onClick={() => this.$viewScene.showModal(record.key)}>预览信息</a>
+          <a target="_blank" rel="noopener noreferrer" href={'/third/platform/preview.html?type=historyVersion&id=' + record.key}>预览信息</a>
           <Divider type="vertical" />
           <a onClick={() => this.restoreVersion(record.sceneId, record.versionNum)}>恢复至此版本</a>
         </span>
@@ -127,7 +127,7 @@ class viewVersion extends Component {
 
     return (
       <Modal
-        title="新建信息"
+        title="发布版本信息"
         visible={modalVisible}
         onCancel={this.modalCancel}
         footer={null}

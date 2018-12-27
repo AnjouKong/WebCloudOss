@@ -51,6 +51,8 @@ class adManage extends Component {
       data: {
         page,
         size,
+        sort: 'updateTime',
+        order: 'desc',
         type: 'ad',
         name: this.name,
       }

@@ -246,6 +246,10 @@ class NavPage extends Component {
                   privileges.indexOf(ROLE_PERMISSIONS_VALUE.DataMenu.sub[2]) > -1 &&
                   <Menu.Item key="/dataStatistics/onDemand"><Link to="/dataStatistics/onDemand">点播统计</Link></Menu.Item>
                 }
+                {
+                  privileges.indexOf(ROLE_PERMISSIONS_VALUE.DataMenu.sub[3]) > -1 &&
+                  <Menu.Item key="/dataStatistics/order"><Link to="/dataStatistics/order">订单统计</Link></Menu.Item>
+                }
               </SubMenu>
             }
             {
@@ -368,6 +372,10 @@ class NavPage extends Component {
                   privileges.indexOf(ROLE_PERMISSIONS_VALUE.InfoManage.sub[0]) > -1 &&
                   <Menu.Item key="/infoManage/announcement"><Link to="/infoManage/announcement">公告信息</Link></Menu.Item>
                 }
+                {
+                  privileges.indexOf(ROLE_PERMISSIONS_VALUE.InfoManage.sub[1]) > -1 &&
+                  <Menu.Item key="/infoManage/WIFI"><Link to="/infoManage/WIFI">WIFI信息</Link></Menu.Item>
+                }
               </SubMenu>
             }
             {
@@ -453,7 +461,11 @@ class NavPage extends Component {
               <SubMenu key="sceneManage" title={<span><Icon type="edit" /><span>场景管理</span></span>}>
                 {
                   privileges.indexOf(ROLE_PERMISSIONS_VALUE.SceneManage.sub[0]) > -1 &&
-                  <Menu.Item key="/sceneManage/sceneManage"><Link to="/sceneManage/sceneManage">场景列表</Link></Menu.Item>
+                  <Menu.Item key="/sceneManage/sceneManage"><Link to="/sceneManage/sceneManage">商户场景列表</Link></Menu.Item>
+                }
+                {
+                  privileges.indexOf(ROLE_PERMISSIONS_VALUE.SceneManage.sub[1]) > -1 &&
+                  <Menu.Item key="/sceneManage/nowReleaseVersion"><Link to="/sceneManage/nowReleaseVersion">当前发布场景列表</Link></Menu.Item>
                 }
               </SubMenu>
             }

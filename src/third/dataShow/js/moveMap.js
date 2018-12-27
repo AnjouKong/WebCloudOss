@@ -136,7 +136,7 @@ function init() {
   option = {
     // backgroundColor: '#404a59',
     title : {
-      text: '地方人员统计',
+      text: '酒店入住人员分布',
       x: 'center',
       y: 37,
       textStyle : {
@@ -199,6 +199,13 @@ function getPeopleData() {
     success: function (res) {
       if (res.success && res.data) {
         peopleData = res.data;
+        /* 假数据
+        peopleData = res.data.map(function (value) {
+          value.toCenter = "120.382621,36.067131";
+          value.toName = '青岛市';
+          return value;
+        });
+        */
         init();
       } else {
         // alert('网络访问异常，请稍后重试！');
@@ -222,6 +229,17 @@ function getPeopleData() {
     success: function (res) {
       if (res.success && res.data) {
         var html = '<ul>';
+        /* 假数据
+        for(var i=0; i<res.data.length; i++){
+          res.data[i].value = 1 + Math.round(Math.random() * 30);
+          if(res.data[i].name === '山东省') {
+            res.data[i].value = 50 + Math.round(Math.random() * 160);
+          }
+        }
+        res.data.sort(function(a,b){
+          return b.value-a.value;
+        });
+        */
         for(var i=0; i<res.data.length; i++){
           switch (res.data[i].name) {
             case "内蒙古自治区":
@@ -262,7 +280,7 @@ function getPeopleData() {
 
 getPeopleData();
 setInterval(() => {
-  getPeopleData();
+  // getPeopleData();
 }, intervalTime);
 
 // 获取URL中参数

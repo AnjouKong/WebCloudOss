@@ -24,10 +24,68 @@ class addScene extends Component {
       bootEventData: [],
       musicEventData: [],
       themeEventData: [],
+      tenantData: [],
+      vodData: [],
     };
   }
   componentDidMount() {
     this.props.onRef(this);
+  }
+  // 获取商户
+  getTenantList = () => {
+    Utils.request({
+      url: `${window.PAY_API_HOST}/op/system/tenant/tenants`,
+      method: 'get',
+      data: {}
+    })
+    .then(res => {
+      const resData = res.data;
+      const tenantList = [];
+      resData.map((item) => { // "/////"为了搜索名字然后取id
+        return tenantList.push(
+          <Option
+            key={item.id}
+            value={`${item.tenantName}/////${item.id}`}
+            title={item.tenantName}
+          >
+            {item.tenantName}
+          </Option>
+        );
+      });
+      this.setState({
+        tenantData: tenantList,
+      });
+    })
+    .catch(() => {
+    });
+  }
+  // 获取Vod
+  getVodList = () => {
+    Utils.request({
+      url: `${window.PAY_API_HOST}/op/ui/media/vod`,
+      method: 'get',
+      data: {}
+    })
+      .then(res => {
+        const resData = res.data;
+        const vodList = [];
+        resData.map((item) => {
+          return vodList.push(
+            <Option
+              key={item.id}
+              value={item.id}
+              title={item.homePageName}
+            >
+              {item.homePageName}
+            </Option>
+          );
+        });
+        this.setState({
+          vodData: vodList,
+        });
+      })
+      .catch(() => {
+      });
   }
   // 获取分类
   getInfoList = () => {
@@ -67,6 +125,8 @@ class addScene extends Component {
       themeEventData: [],
     });
     this.getInfoList();
+    this.getTenantList();
+    this.getVodList();
   }
   modalCancel = () => {
     this.setState({
@@ -85,6 +145,7 @@ class addScene extends Component {
         // 添加
         const param = {
           ...values,
+          tenantId: values.tenantId.split('/////')[1],
           uiSceneContents: uiSceneList,
         };
         console.log(JSON.stringify(param));
@@ -128,7 +189,7 @@ class addScene extends Component {
       case 'skipTime': // 跳过时间
         bootEventData[index].skipTime = e;
         break;
-      case 'skip': // 是否强制跳过
+      case 'skip': // 禁止强制跳过
         bootEventData[index].skip = e;
         break;
       case 'bootPlay': // 是否在开机页播放
@@ -184,6 +245,50 @@ class addScene extends Component {
         break;
     }
   }
+  // 删除
+  delete = (index, type) => {
+    confirm({
+      title: '确认要删除吗?',
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        switch (type) {
+          case 'boot': {
+            const { bootEventData } = this.state;
+            console.log('删除：', index, bootEventData);
+            bootEventData.splice(index, 1);
+            this.setState({
+              bootEventData,
+            });
+            break;
+          }
+          case 'music': {
+            const { musicEventData } = this.state;
+            console.log('删除：', index, musicEventData);
+            musicEventData.splice(index, 1);
+            this.setState({
+              musicEventData,
+            });
+            break;
+          }
+          case 'theme': {
+            const { themeEventData } = this.state;
+            console.log('删除：', index, themeEventData);
+            themeEventData.splice(index, 1);
+            this.setState({
+              themeEventData,
+            });
+            break;
+          }
+          default:
+            break;
+        }
+      },
+      onCancel: () => {
+        // console.log('Cancel');
+      },
+    });
+  };
   // 开机事件列表
   bootEventList = () => {
     const { bootEventData } = this.state;
@@ -196,7 +301,7 @@ class addScene extends Component {
         );
         const list = (
           <div key={index} style={{ padding: '10px 15px', border: '1px solid #ccc', position: 'relative' }}>
-            <Button style={{ padding: '10px 15px', position: 'absolute' }}>X</Button>
+            <Button onClick={() => this.delete(index, 'boot')} style={{ padding: '10px 15px', position: 'absolute', right: 0, top: 0, border: 0 }}>X</Button>
             <Row style={{ marginBottom: 10 }}>
               <Col span={7}><Input value={item.name} disabled /></Col>
               <Col span={7} offset={1}><Input value={languages} disabled /></Col>
@@ -230,7 +335,7 @@ class addScene extends Component {
                 />
               </Col>
               <Col span={7} offset={1}>
-                是否强制跳过：
+                禁止强制跳过：
                 <Switch defaultChecked={false} onChange={e => this.inputOnchange(e, 'skip', index)} />
               </Col>
             </Row>
@@ -252,6 +357,7 @@ class addScene extends Component {
         );
         const list = (
           <div key={index} style={{ padding: 10, border: '1px solid #ccc', position: 'relative' }}>
+            <Button onClick={() => this.delete(index, 'music')} style={{ padding: '10px 15px', position: 'absolute', right: 0, top: 0, border: 0 }}>X</Button>
             <Row style={{ marginBottom: 10 }}>
               <Col span={8}><Input value={item.name} disabled /></Col>
               <Col span={8} offset={1}><Input value={languages} disabled /></Col>
@@ -284,6 +390,7 @@ class addScene extends Component {
         );
         const list = (
           <div key={index} style={{ padding: 10, border: '1px solid #ccc', position: 'relative' }}>
+            <Button onClick={() => this.delete(index, 'theme')} style={{ padding: '10px 15px', position: 'absolute', right: 0, top: 0, border: 0 }}>X</Button>
             <Row style={{ marginBottom: 10 }}>
               <Col span={7}><Input value={item.name} disabled /></Col>
               <Col span={7} offset={1}><Input value={languages} disabled /></Col>
@@ -296,7 +403,7 @@ class addScene extends Component {
   }
 
   render() {
-    const { modalVisible, typeData } = this.state;
+    const { modalVisible, typeData, tenantData, vodData } = this.state;
     const { getFieldDecorator } = this.props.form;
     const formItemLayout = {
       labelCol: {
@@ -352,6 +459,29 @@ class addScene extends Component {
                 rules: [{ required: true, message: '请选择语言' }],
               })(
                 <CheckboxGroup options={options} />
+              )}
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              label="选择商户"
+            >
+              {getFieldDecorator('tenantId', {
+                rules: [{ required: true, message: '请选择商户' }],
+              })(
+                <Select showSearch>
+                  { tenantData }
+                </Select>
+              )}
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              label="选择VOD首页"
+            >
+              {getFieldDecorator('mediaHomePageId', {
+              })(
+                <Select>
+                  { vodData }
+                </Select>
               )}
             </FormItem>
           </Form>

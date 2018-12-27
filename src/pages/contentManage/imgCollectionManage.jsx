@@ -83,6 +83,8 @@ class imgCollectionManage extends Component {
       data: {
         page,
         size,
+        sort: 'updateTime',
+        order: 'desc',
         type: 'imgCollection',
         name: this.name,
         categoryId,

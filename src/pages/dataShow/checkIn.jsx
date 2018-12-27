@@ -15,7 +15,7 @@ class Page9 extends Component {
 
     this.$iframe = null;
 
-    this.tenantId = JSON.parse(window.sessionStorage.getItem('UV_userInfo')).tenantId;
+    this.tenantId = window.sessionStorage.getItem('UV_userInfo') ? JSON.parse(window.sessionStorage.getItem('UV_userInfo')).tenantId : '';
     // this.tenantId = '4UBbE4nnwGehc4WIqVN';
   }
 

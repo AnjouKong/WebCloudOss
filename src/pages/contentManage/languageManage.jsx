@@ -63,6 +63,8 @@ class languageManage extends Component {
       data: {
         page,
         size,
+        sort: 'updateTime',
+        order: 'desc',
         type: 'language',
         name: this.name,
       }

@@ -17,11 +17,14 @@ var staticIcon = true;
 var fucosIcon = true;
 var clickIcon = true;
 var TimeFn = null;
+// type: 1管理，2商户
+var loginType = window.sessionStorage.getItem('UV_userInfo') ? JSON.parse(window.sessionStorage.getItem('UV_userInfo')).type : '';
+console.log(loginType);
 
-//事件类型下拉列表
+// 事件类型下拉列表
 function selectNum(){
     $(".selectNum").on("click","select",function(){
-        $("#packageNameGeneral,#actionGeneral,#packageNameSpecial,#actionSpecial,#sourceSpecial,#channelSpecial,#packageName,#action,#mediaName_search").val("");
+        $("#packageNameGeneral,#actionGeneral,#packageNameSpecial,#actionSpecial,#sourceSpecial,#channelSpecial,#packageName,#action").val("");
         $(".selectTab").show();
         $(".selectTab > div").hide();
         var dataTo = $(".selectNum").find("option:selected").attr("data-to");
@@ -431,7 +434,6 @@ function modalReset(){
             $("#previewBG").val($("div[data-id='boxId']").css("background-color"));
             $("#focusBG").val($("div[data-id='boxId']").attr("focusBG"));
             $(".languageName").find("input[type='text']").val("");
-            publicUploadEcho("previewBGUpload", $("div[data-id='boxId'").attr("backGroupImage"));
             // 多语言name
             var nameReset = JSON.parse($("div[data-id='boxId']").attr("namelist"));
             var languageName = $(".languageName").find("input[type='hidden']");
@@ -443,6 +445,8 @@ function modalReset(){
                 }
             });
         }
+        // 面板容器上传图片
+        publicUploadEcho("previewBGUpload", $("div[data-id='boxId'").attr("backGroupImage"));
         // 聚焦
         publicUploadEcho("focusImage",$("div[data-id='boxId']").attr("focusBGImg"));
         // 事件类型
@@ -541,7 +545,7 @@ function publicCutover(){
 };
 // 编辑回显图片
 function publicUploadEcho(name, nameUpload){
-    if(nameUpload != ""){
+    if(nameUpload && nameUpload != "" ){
         $("."+name).parents(".form-group").find("p").remove();
         $("."+name).find("input[type='file']").val("");
         $("."+name).parents(".form-group").append('<p class="imgUpload col-xs-8">已上传：<a href="'+nameUpload+'" target="_blank">'+nameUpload+'</a></p>')
@@ -581,7 +585,7 @@ function publicPanelUI(type){
         panelType(type);
         $(".speciesBox.addSpeciesTo").append(dragBox);
         $(".speciesBox.addSpeciesTo").find(".dragBox").addClass("childBox");
-        $(".speciesBox.addSpeciesTo").find(".dragBox").css({"width":"150px","height":"170px"});
+        $(".speciesBox.addSpeciesTo").find(".dragBox").last().css({"width":"150px","height":"170px"});
     }else{
         panelType(type);
         $(".drag").append(dragBox);
@@ -638,7 +642,9 @@ function columnDouble(){
     stopBubble();
     // 取消上次延时未执行的方法
     clearTimeout(TimeFn);
-    // if($(".columnBox.addColumnTo").attr("authority") == '0') return alert("您没有权限修改此项");
+    if(loginType === 2){
+        if($(".columnBox.addColumnTo").attr("authority") == '0') return alert("您没有权限修改此项");
+    }
     $(".columnBox.addColumnTo").find("p").attr("id","columnId");
     var scrollReset =  $("#columnId").parent().parent();
     scrollReset.animate({ 'scrollTop':0, 'scrollLeft':0 },0);
@@ -655,7 +661,9 @@ function columnDouble(){
 // 推荐双击
 function childDouble(){
     stopBubble();
-    // if($(".childBox.addChildTo").attr("authority") == '0') return alert("您没有权限修改此项");
+    if(loginType === 2){
+        if($(".childBox.addChildTo").attr("authority") == '0') return alert("您没有权限修改此项");
+    }
     $(".childBox.addChildTo").find("p").attr("id","columnId");
     var scrollReset =  $("#columnId").parent().parent();
     scrollReset.animate({ 'scrollTop':0, 'scrollLeft':0 },0);
@@ -735,11 +743,22 @@ var GRID_WIDTH = 10;              //网格的大小
 var GRID_HEIGHT = 10;
 // drawGrid(CANVAS_WIDTH,CANVAS_HEIGHT,GRID_WIDTH,GRID_HEIGHT);
 
+var query = JSON.parse(getQueryString('currentId'));
+var currentId = query.id; // window.location.search.split("=");
+var tenantId = query.tenantId;
+var sceneName = query.sceneName;
+tenantId = tenantId ? tenantId : '';
+sceneName = sceneName ? sceneName : '';
+
+console.log(currentId);
+// console.log(tenantId);
+// console.log(sceneName);
+
 $(function(){
     business();
-    var currentId = window.location.search.split("=");
+
     // 获取语言
-    $.post(base+"/op/ui/scene/langauge", {sceneId: currentId[currentId.length-1]}, function (data) {
+    $.post(base+"/op/ui/scene/langauge", {sceneId: currentId}, function (data) {
         var language = data.data;
         for(var g = 0; g < language.length; g++){
             $(".languageName").append('<label class="col-xs-3 control-label">'+language[g].language+'名称：</label>' +
@@ -1020,6 +1039,13 @@ $(function(){
                 return;
             };
         }
+        // 内容展示容器
+        if($("div[data-id='boxId']").attr("type")== "ShowUI"){
+            if($(".selectNum").find(".selClick").length < 1 || $(".selectNum").find(".selClick").css("display") == "none"){
+                alert("请选择一条点击事件");
+                return;
+            };
+        }
         // 判断是面板还是容器
         if($("#accordionPanel").css("display") == "none"){
             editSave();
@@ -1123,7 +1149,7 @@ $(function(){
         };
         // 提交
         $.ajax({
-            url: base+"/op/ui/scene/addScene?sceneId=" + currentId[currentId.length-1],
+            url: base+"/op/ui/scene/addScene?sceneId=" + currentId,
             type : "POST",
             dataType : "JSON",
             contentType: "application/json;charset=UTF-8",
@@ -1134,7 +1160,7 @@ $(function(){
             success: function (data) {
                 if (data.success) {
                     alert(data.message);
-                    window.parent.location.href = "/#/sceneManage/sceneManage";
+                    window.parent.location.href = "/#/sceneManage/sceneManage?tenantId=" + tenantId + "&sceneName=" + sceneName;
                 } else {
                     alert(data.message);
                 }
@@ -1143,7 +1169,7 @@ $(function(){
     });
     // 返回
     $("#goBack").on("click", function() {
-        window.parent.location.href = "/#/sceneManage/sceneManage";
+        window.parent.location.href = "/#/sceneManage/sceneManage?tenantId=" + tenantId + "&sceneName=" + sceneName;
     });
 });
 
@@ -1558,6 +1584,9 @@ function previewSave(){
     };
     var previewBGUpload = $(".previewBGUpload").find("input[type='hidden']").val();
     var focusImage = $(".focusImage").find("input[type='hidden']").val();
+    var backgImage = $(".backgImage").find("input[type='hidden']").val();
+    var focusImage = $(".focusImage").find("input[type='hidden']").val();
+    var clickImage = $(".clickImage").find("input[type='hidden']").val();
     // 面板
     $(".dragBox").each(function(){
         var dragBox = $(this);
@@ -1829,4 +1858,19 @@ function editSave(){
             }
         }
     });
+}
+
+
+// 获取URL中参数
+// 参数 name 链接中的参数名称
+// 返回 参数值
+function getQueryString(name) {
+  console.log(window.location);
+  var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+  var queryStr = decodeURI(window.location.search.substr(1));
+  var matchStr = queryStr.match(reg);
+  if (matchStr != null) {
+    return (matchStr[2]);
+  }
+  return null;
 }

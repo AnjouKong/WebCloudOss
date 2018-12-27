@@ -102,7 +102,7 @@ class editUserComponent extends Component {
       url: `${window.PAY_API_HOST}/op/system/role/get`,
       method: 'post',
       data: {
-        roleId: JSON.parse(window.sessionStorage.getItem('UV_userInfo')).roleId
+        roleId: window.sessionStorage.getItem('UV_userInfo') ? JSON.parse(window.sessionStorage.getItem('UV_userInfo')).roleId : '',
       }
     })
     .then(res => {

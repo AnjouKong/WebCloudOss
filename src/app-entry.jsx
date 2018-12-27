@@ -18,6 +18,7 @@ import Index from './pages/index';
 import Flow from './pages/dataStatistics/flow';
 import Recommend from './pages/dataStatistics/recommend';
 import OnDemand from './pages/dataStatistics/onDemand';
+import Order from './pages/dataStatistics/order';
 import InfoList from './pages/infoRelease/list';
 import CIBNMedia from './pages/mediaManage/cibnMedia';
 import LibraryManage from './pages/mediaManage/libraryManage';
@@ -41,6 +42,7 @@ import NodeList from './pages/nodeManage/nodeList';
 import MediaDownload from './pages/nodeManage/mediaDownload';
 import LogManage from './pages/nodeManage/logManage';
 import Announcement from './pages/infoManage/announcement';
+import WIFI from './pages/infoManage/WIFI';
 import InstantCheckIn from './pages/dataShow/instantCheckIn';
 import PeopleSource from './pages/dataShow/peopleSource';
 import VideoHit from './pages/dataShow/videoHit';
@@ -61,6 +63,7 @@ import AdManage from './pages/contentManage/adManage';
 import LanguageManage from './pages/contentManage/languageManage';
 import PmsManage from './pages/contentManage/pmsManage';
 import SceneManage from './pages/sceneManage/sceneManage';
+import NowReleaseVersion from './pages/sceneManage/nowReleaseVersion';
 import Layout from './pages/sceneManage/layout';
 
 const App = function(props) {
@@ -140,6 +143,7 @@ render(
             <Route path={RN.FLOW} onEnter={routeEnter} component={Flow} />
             <Route path={RN.RECOMMEND} onEnter={routeEnter} component={Recommend} />
             <Route path={RN.ONDEMAND} onEnter={routeEnter} component={OnDemand} />
+            <Route path={RN.ORDER} onEnter={routeEnter} component={Order} />
             <Route path={RN.INFOLIST} onEnter={routeEnter} component={InfoList} />
             <Route path={RN.CIBNMEDIA} onEnter={routeEnter} component={CIBNMedia} />
             <Route path={RN.LIBRARYMANAGE} onEnter={routeEnter} component={LibraryManage} />
@@ -163,6 +167,7 @@ render(
             <Route path={RN.MEDIADOWNLOAD} onEnter={routeEnter} component={MediaDownload} />
             <Route path={RN.LOGMANAGE} onEnter={routeEnter} component={LogManage} />
             <Route path={RN.ANNOUNCEMENT} onEnter={routeEnter} component={Announcement} />
+            <Route path={RN.WIFI} onEnter={routeEnter} component={WIFI} />
             <Route path={RN.INSTANTCHECKIN} onEnter={routeEnter} component={InstantCheckIn} />
             <Route path={RN.PEOPLESOURCE} onEnter={routeEnter} component={PeopleSource} />
             <Route path={RN.VIDEOHIT} onEnter={routeEnter} component={VideoHit} />
@@ -183,6 +188,7 @@ render(
             <Route path={RN.LANGUAGEMANAGE} onEnter={routeEnter} component={LanguageManage} />
             <Route path={RN.PMSMANAGE} onEnter={routeEnter} component={PmsManage} />
             <Route path={RN.SCENEMANAGE} onEnter={routeEnter} component={SceneManage} />
+            <Route path={RN.NOWRELEASEVERSION} onEnter={routeEnter} component={NowReleaseVersion} />
             <Route path={RN.LAYOUT} onEnter={routeEnter} component={Layout} />
           </Route>
 

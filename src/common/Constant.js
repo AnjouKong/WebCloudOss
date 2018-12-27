@@ -8,13 +8,13 @@ export const TOAST_TYPE = {
 
 // 角色权限 对应value
 export const ROLE_PERMISSIONS_VALUE = {
-  DataMenu: { main: 'dataMenu', sub: ['dataMenu100', 'dataMenu200', 'dataMenu300'] },
+  DataMenu: { main: 'dataMenu', sub: ['dataMenu100', 'dataMenu200', 'dataMenu300', 'dataMenu400'] },
   InfoMenu: { main: 'infoMenu', sub: ['infoMenu100'] },
   MediaMenu: { main: 'mediaMenu', sub: ['mediaMenu100', 'mediaMenu200', 'mediaMenu300', 'mediaMenu400', 'mediaMenu500', 'mediaMenu600'] },
   UserMenu: { main: 'userMenu', sub: ['userMenu100', 'userMenu200', 'userMenu300'] },
   AppMenu: { main: 'appMenu', sub: ['appMenu100', 'appMenu200', 'appMenu300', 'appMenu400', 'appMenu500', 'appMenu600', 'appMenu700', 'appMenu800', 'appMenu900'] },
   NodeMenu: { main: 'nodeMenu', sub: ['nodeMenu100', 'nodeMenu200', 'nodeMenu300'] },
-  InfoManage: { main: 'infoManage', sub: ['infoManage100'] },
+  InfoManage: { main: 'infoManage', sub: ['infoManage100', 'infoManage200'] },
   dataShow: { main: 'dataShow', sub: ['dataShow100', 'dataShow200', 'dataShow300', 'dataShow400', 'dataShow500'] },
   contentManage: {
     main: 'contentManage',
@@ -23,7 +23,7 @@ export const ROLE_PERMISSIONS_VALUE = {
   },
   SceneManage: {
     main: 'sceneManage',
-    sub: ['sceneManage100'],
+    sub: ['sceneManage100', 'sceneManage200'],
     btn: ['sceneManageBtn101', 'sceneManageBtn102', 'sceneManageBtn103', 'sceneManageBtn104', 'sceneManageBtn105', 'sceneManageBtn106', 'sceneManageBtn107', 'sceneManageBtn108', 'sceneManageBtn109'],
   },
 };

@@ -88,6 +88,8 @@ class TenantList extends Component {
       data: {
         page,
         size,
+        sort: 'createTime',
+        order: 'desc',
         tenantName: tenantName || '',
       }
     })
@@ -141,7 +143,7 @@ class TenantList extends Component {
       method: 'get',
       // data: {}
       data: {
-        roleId: JSON.parse(window.sessionStorage.getItem('UV_userInfo')).roleId
+        roleId: window.sessionStorage.getItem('UV_userInfo') ? JSON.parse(window.sessionStorage.getItem('UV_userInfo')).roleId : '',
       }
     })
       .then(res => {

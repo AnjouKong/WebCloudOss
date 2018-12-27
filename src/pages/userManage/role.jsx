@@ -202,6 +202,7 @@ class UserRole extends Component {
                             <Checkbox value={ROLE_PERMISSIONS_VALUE.DataMenu.sub[0]}>流量统计</Checkbox>
                             <Checkbox value={ROLE_PERMISSIONS_VALUE.DataMenu.sub[1]}>推荐位统计</Checkbox>
                             <Checkbox value={ROLE_PERMISSIONS_VALUE.DataMenu.sub[2]}>点播统计</Checkbox>
+                            <Checkbox value={ROLE_PERMISSIONS_VALUE.DataMenu.sub[3]}>订单统计</Checkbox>
                           </Row>
                         }
                         <Row className="roleP-checkbox-row">
@@ -281,6 +282,7 @@ class UserRole extends Component {
                           rolePermissionsValues.indexOf(ROLE_PERMISSIONS_VALUE.InfoManage.main) > -1 &&
                           <Row className="roleP-checkbox-row roleP-checkbox-row-children">
                             <Checkbox value={ROLE_PERMISSIONS_VALUE.InfoManage.sub[0]}>公告信息</Checkbox>
+                            <Checkbox value={ROLE_PERMISSIONS_VALUE.InfoManage.sub[1]}>WIFI信息</Checkbox>
                           </Row>
                         }
                         <Row className="roleP-checkbox-row">
@@ -335,7 +337,8 @@ class UserRole extends Component {
                         {
                           rolePermissionsValues.indexOf(ROLE_PERMISSIONS_VALUE.SceneManage.main) > -1 &&
                           <Row className="roleP-checkbox-row roleP-checkbox-row-children">
-                            <Checkbox value={ROLE_PERMISSIONS_VALUE.SceneManage.sub[0]}>场景列表</Checkbox>
+                            <Checkbox value={ROLE_PERMISSIONS_VALUE.SceneManage.sub[0]}>商户场景列表</Checkbox>
+                            <Checkbox value={ROLE_PERMISSIONS_VALUE.SceneManage.sub[1]}>当前发布场景列表</Checkbox>
                           </Row>
                         }
                         {

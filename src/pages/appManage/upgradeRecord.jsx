@@ -53,9 +53,34 @@ class Strategy extends Component {
       dataIndex: 'status',
       key: 'status',
       render: status => {
-        const red = <span style={{ color: 'red' }}>失败</span>;
-        const green = <span style={{ color: '#008B45' }}>成功</span>;
-        return status === 100003 ? green : red;
+        // const red = <span style={{ color: 'red' }}>{status}</span>;
+        // const green = <span style={{ color: '#008B45' }}>{status}</span>;
+        // return status === 100003 ? green : red;
+        const black = <span>{status}</span>;
+        return black;
+      }
+    }, {
+      title: '策略行为',
+      dataIndex: 'promotionWay ',
+      key: 'promotionWay ',
+      render: (promotionWay, record) => {
+        // 用于区分安装卸载 1:install 2:uninstall -1: 没获取到策略 ,
+        let text = '';
+        console.log(record.promotionWay);
+        switch (record.promotionWay) {
+          case '1' :
+            text = '安装';
+            break;
+          case '2' :
+            text = '卸载';
+            break;
+          case '-1' :
+            text = '无策略';
+            break;
+          default:
+            break;
+        }
+        return <span>{text}</span>;
       }
     }, {
       title: '备注',

@@ -60,12 +60,15 @@
                 <li><a href="#" id="time">时间time</a></li>
                 <li><a href="#" id="weather">天气weather</a></li>
                 <li><a href="#" id="date">日期date</a></li>
+                <li><a href="#" id="wifi">无线wifi</a></li>
                 <li><a href="#" id="area">地区area</a></li>
                 <li><a href="#" id="languagePen">语言language</a></li>
               </ul>
             </div>
             <label class="labelBtn" id="pmsUI">PMS信息</label>
+            <label class="labelBtn" id="announcementUI">公告信息</label>
             <label class="labelBtn" id="imageUI">图片信息</label>
+            <label class="labelBtn" id="wifiUI">WIFI信息</label>
           </div>
         </div>
       </div>
@@ -211,6 +214,7 @@
                     <!--<input type="text" id="editName" class="form-control" placeholder="请输入名称">-->
                   <!--</div>-->
                 </div>
+				<!--pms：pms；announcement：公告信息；ShowUI：内容展示容器；ImageUI：图片信息，focusChange：推荐位左右换屏，wifi：业务容器风格-->
                 <div class="form-group pms">
                   <label class="col-xs-3 control-label">是否滚动：</label>
                   <div class="col-xs-8 roll" style="padding-top: 4px;">
@@ -442,7 +446,7 @@
           </div>
           <div id="staticStateStyle" class="panel-collapse collapse in">
             <!--静态样式-->
-            <div class="panel-collapse collapse in">
+            <div class="panel-collapse collapse in wifiContainer">
               <a data-toggle="collapse" data-parent="#staticStateStyle" href="#collapseFo">
                 <h5 style='padding:10px 20px 5px;'>静态样式：</h5>
               </a>
@@ -597,7 +601,7 @@
               </div>
             </div>
             <!--点击样式-->
-            <div class="panel-collapse collapse in pendantInfo">
+            <div class="panel-collapse collapse in pendantInfo wifiContainer">
               <a data-toggle="collapse" data-parent="#staticStateStyle" href="#collapseTress">
                 <h5 style="padding:10px 20px 5px;">点击样式：</h5>
               </a>

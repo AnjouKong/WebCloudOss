@@ -83,6 +83,8 @@ class musicManage extends Component {
       data: {
         page,
         size,
+        sort: 'updateTime',
+        order: 'desc',
         type: 'music',
         name: this.name,
         categoryId,

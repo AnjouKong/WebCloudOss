@@ -21,14 +21,78 @@ class addScene extends Component {
     this.state = {
       modalVisible: false,
       confirmLoading: false,
+      contentId: '',
+      tenantId: '',
       typeData: [],
       bootEventData: [],
       musicEventData: [],
       themeEventData: [],
+      tenantData: [],
+      vodData: [],
     };
+    this.tenantName = '';
   }
   componentDidMount() {
     this.props.onRef(this);
+    this.getInfoList();
+    this.getTenantList();
+    this.getVodList();
+  }
+  // 获取商户
+  getTenantList = () => {
+    Utils.request({
+      url: `${window.PAY_API_HOST}/op/system/tenant/tenants`,
+      method: 'get',
+      data: {}
+    })
+    .then(res => {
+      const resData = res.data;
+      const tenantList = [];
+      resData.map((item) => { // "/////"为了搜索名字然后取id
+        return tenantList.push(
+          <Option
+            key={item.id}
+            value={`${item.tenantName}/////${item.id}`}
+            title={item.tenantName}
+          >
+            {item.tenantName}
+          </Option>
+        );
+      });
+      this.setState({
+        tenantData: tenantList,
+      });
+    })
+    .catch(() => {
+    });
+  }
+  // 获取Vod
+  getVodList = () => {
+    Utils.request({
+      url: `${window.PAY_API_HOST}/op/ui/media/vod`,
+      method: 'get',
+      data: {}
+    })
+      .then(res => {
+        const resData = res.data;
+        const vodList = [];
+        resData.map((item) => {
+          return vodList.push(
+            <Option
+              key={item.id}
+              value={item.id}
+              title={item.homePageName}
+            >
+              {item.homePageName}
+            </Option>
+          );
+        });
+        this.setState({
+          vodData: vodList,
+        });
+      })
+      .catch(() => {
+      });
   }
   // 获取分类
   getInfoList = () => {
@@ -55,10 +119,10 @@ class addScene extends Component {
   creatListDom = (typeData) => {
     typeList = [];
     typeData.map((item) => {
-      return typeList.push(<Option key={item.id.toString()} value={item.id.toString()}>{item.name}</Option>);
+      return typeList.push(<Option key={item.id} value={item.id}>{item.name}</Option>);
     }
     );
-  }
+  };
   // 弹出框处理函数
   showModal = (record) => {
     console.log(record);
@@ -86,19 +150,22 @@ class addScene extends Component {
     for (let i = 0; i < languageList.length; i += 1) {
       languageData.push(languageList[i].language);
     }
+    this.tenantName = record.tenantName;
     this.setState({
       modalVisible: true,
       contentId: record.id,
+      tenantId: record.tenantId,
       bootEventData: bootData,
       musicEventData: musicData,
       themeEventData: themeData,
     });
-    this.getInfoList();
     setTimeout(() => {
       this.props.form.setFieldsValue({
         categoryId: record.categoryId,
         name: record.name,
-        uiSceneLanguages: languageData
+        uiSceneLanguages: languageData,
+        mediaHomePageId: record.mediaHomePageId,
+        // tenantId: record.tenantId
       });
     }, 200);
   }
@@ -117,10 +184,12 @@ class addScene extends Component {
           confirmLoading: true,
         });
         const uiSceneList = this.state.bootEventData.concat(this.state.musicEventData, this.state.themeEventData);
+        console.log(uiSceneList);
         // 添加
         const param = {
           ...values,
           id: this.state.contentId,
+          tenantId: this.state.tenantId,
           uiSceneContents: uiSceneList,
         };
         // console.log(JSON.stringify(param));
@@ -154,7 +223,7 @@ class addScene extends Component {
     const { bootEventData, musicEventData } = this.state;
     switch (type) {
       case 'order': // 排序
-        bootEventData[index].order = e;
+        bootEventData[index].seq = e;
         break;
       case 'playTime': // 播放时间
         bootEventData[index].playTime = e;
@@ -165,7 +234,7 @@ class addScene extends Component {
       case 'skipTime': // 跳过时间
         bootEventData[index].skipTime = e;
         break;
-      case 'skip': // 是否强制跳过
+      case 'skip': // 禁止强制跳过
         bootEventData[index].skip = e;
         break;
       case 'bootPlay': // 是否在开机页播放
@@ -182,7 +251,9 @@ class addScene extends Component {
   handleChildChange = (paramData, type) => {
     switch (type) {
       case 'boot': {
+        // console.log(paramData);
         const bootArray = this.state.bootEventData.concat(paramData);
+        // console.log(bootArray);
         const hash = {};
         const bootData = bootArray.reduce((item, next) => {
           if (!hash[next.contentId]) {
@@ -191,6 +262,8 @@ class addScene extends Component {
           }
           return item;
         }, []);
+
+        // console.log(bootData.toString());
         this.setState({
           bootEventData: bootData,
         });
@@ -204,14 +277,19 @@ class addScene extends Component {
       }
       case 'theme': {
         const themeArray = this.state.themeEventData.concat(paramData);
+        // console.log(themeArray);
         const hash = {};
+        const hashFlag = {}; //  主题包 同一个标识只能添加一个
         const themeData = themeArray.reduce((item, next) => {
-          if (!hash[next.contentId]) {
+          if (!hash[next.contentId] && !hashFlag[next.flag]) {
             hash[next.contentId] = true;
+            hashFlag[next.flag] = true;
             item.push(next);
           }
           return item;
         }, []);
+
+        // console.log(themeData);
         this.setState({
           themeEventData: themeData,
         });
@@ -235,7 +313,7 @@ class addScene extends Component {
           <div key={index} style={{ padding: '10px 15px', border: '1px solid #ccc', position: 'relative' }}>
             <Button
               style={{ position: 'absolute', right: 0, top: 0, border: 0, zIndex: 99 }}
-              onClick={() => this.itemDelete(index, item.id)}
+              onClick={() => this.bootEventItemDelete(index, item.id)}
             >
               <Icon type="close" />
             </Button>
@@ -275,7 +353,7 @@ class addScene extends Component {
                 />
               </Col>
               <Col span={7} offset={1}>
-                是否强制跳过：
+                禁止强制跳过：
                 <Switch defaultChecked={item.skip} onChange={e => this.inputOnchange(e, 'skip', index)} />
               </Col>
             </Row>
@@ -285,6 +363,51 @@ class addScene extends Component {
       })
     );
   }
+  // 删除开机事件资源
+  bootEventItemDelete = (index, id) => {
+    console.log(index, id);
+    const { bootEventData } = this.state;
+    console.log(bootEventData);
+    bootEventData.splice(index, 1);
+    const titleText = id ? '删除后不可还原，确认要删除吗?' : '未保存资源，确认要删除吗?';
+    confirm({
+      title: titleText,
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        // 删除资源
+        if (id) {
+          Utils.request({
+            url: `${window.PAY_API_HOST}/op/ui/scene/deleteSceneContent`,
+            method: 'post',
+            data: {
+              id,
+            }
+          })
+            .then(res => {
+              if (res && res.success) {
+                message.success('删除成功');
+                this.setState({
+                  bootEventData
+                });
+              }
+            })
+            .catch(() => {
+              message.error('删除失败');
+            });
+        } else {
+          this.setState({
+            bootEventData
+          });
+        }
+      },
+      onCancel: () => {
+        // console.log('Cancel');
+      },
+    });
+  };
+
+
   // 背景音乐事件列表
   musicEventList = () => {
     const { musicEventData } = this.state;
@@ -297,6 +420,12 @@ class addScene extends Component {
         );
         const list = (
           <div key={index} style={{ padding: 10, border: '1px solid #ccc', position: 'relative' }}>
+            <Button
+              style={{ position: 'absolute', right: 0, top: 0, border: 0, zIndex: 99 }}
+              onClick={() => this.musicEventItemDelete(index, item.id)}
+            >
+              <Icon type="close" />
+            </Button>
             <Row style={{ marginBottom: 10 }}>
               <Col span={8}><Input value={item.name} disabled /></Col>
               <Col span={8} offset={1}><Input value={languages} disabled /></Col>
@@ -317,6 +446,50 @@ class addScene extends Component {
       })
     );
   }
+// 删除背景音乐资源
+  musicEventItemDelete = (index, id) => {
+    console.log(index, id);
+    const { musicEventData } = this.state;
+    console.log(musicEventData);
+    musicEventData.splice(index, 1);
+    const titleText = id ? '删除后不可还原，确认要删除吗?' : '未保存资源，确认要删除吗?';
+    confirm({
+      title: titleText,
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        // 删除资源
+        if (id) {
+          Utils.request({
+            url: `${window.PAY_API_HOST}/op/ui/scene/deleteSceneContent`,
+            method: 'post',
+            data: {
+              id,
+            }
+          })
+            .then(res => {
+              if (res && res.success) {
+                message.success('删除成功');
+                this.setState({
+                  musicEventData
+                });
+              }
+            })
+            .catch(() => {
+              message.error('删除失败');
+            });
+        } else {
+          this.setState({
+            musicEventData
+          });
+        }
+      },
+      onCancel: () => {
+        // console.log('Cancel');
+      },
+    });
+  };
+
   // 主题包事件列表
   themeEventList = () => {
     const { themeEventData } = this.state;
@@ -329,9 +502,16 @@ class addScene extends Component {
         );
         const list = (
           <div key={index} style={{ padding: 10, border: '1px solid #ccc', position: 'relative' }}>
+            <Button
+              style={{ position: 'absolute', right: 0, top: 0, border: 0, zIndex: 99 }}
+              onClick={() => this.themeEventItemDelete(index, item.id)}
+            >
+              <Icon type="close" />
+            </Button>
             <Row style={{ marginBottom: 10 }}>
               <Col span={7}><Input value={item.name} disabled /></Col>
               <Col span={7} offset={1}><Input value={languages} disabled /></Col>
+              <Col span={7} offset={1}><Input value={item.flag} disabled /></Col>
             </Row>
           </div>
         );
@@ -339,36 +519,43 @@ class addScene extends Component {
       })
     );
   }
-  // 删除资源
-  itemDelete = (index, id) => {
+  // 删除主题包事件资源
+  themeEventItemDelete = (index, id) => {
     console.log(index, id);
-    const { bootEventData } = this.state;
-    console.log(bootEventData);
-    bootEventData.splice(index, 1);
+    const { themeEventData } = this.state;
+    console.log(themeEventData);
+    themeEventData.splice(index, 1);
+    const titleText = id ? '删除后不可还原，确认要删除吗?' : '未保存资源，确认要删除吗?';
     confirm({
-      title: '删除后不可还原，确认要删除吗?',
+      title: titleText,
       okText: '确认',
       cancelText: '取消',
       onOk: () => {
-        // 删除用户
-        Utils.request({
-          url: `${window.PAY_API_HOST}/op/ui/scene/deleteSceneContent`,
-          method: 'post',
-          data: {
-            id,
-          }
-        })
-        .then(res => {
-          if (res && res.success) {
-            message.success('删除成功');
-            this.setState({
-              bootEventData
+        // 删除资源
+        if (id) {
+          Utils.request({
+            url: `${window.PAY_API_HOST}/op/ui/scene/deleteSceneContent`,
+            method: 'post',
+            data: {
+              id,
+            }
+          })
+            .then(res => {
+              if (res && res.success) {
+                message.success('删除成功');
+                this.setState({
+                  themeEventData
+                });
+              }
+            })
+            .catch(() => {
+              message.error('删除失败');
             });
-          }
-        })
-        .catch(() => {
-          message.error('删除失败');
-        });
+        } else {
+          this.setState({
+            themeEventData
+          });
+        }
       },
       onCancel: () => {
         // console.log('Cancel');
@@ -377,7 +564,7 @@ class addScene extends Component {
   };
 
   render() {
-    const { modalVisible, typeData } = this.state;
+    const { modalVisible, typeData, vodData } = this.state; // tenantData
     const { getFieldDecorator } = this.props.form;
     const formItemLayout = {
       labelCol: {
@@ -391,7 +578,7 @@ class addScene extends Component {
     };
     return (
       <Modal
-        title="新建信息"
+        title="修改信息"
         visible={modalVisible}
         onOk={this.handleSubmit}
         onCancel={this.modalCancel}
@@ -433,6 +620,30 @@ class addScene extends Component {
                 rules: [{ required: true, message: '请选择语言' }],
               })(
                 <CheckboxGroup options={options} />
+              )}
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              label="商户"
+            >
+              {/* getFieldDecorator('tenantId', {
+                rules: [{ required: true, message: '请选择商户' }],
+              })(
+                <Select showSearch>
+                  { tenantData }
+                </Select>
+              ) */}
+              <span className="ant-form-text">{this.tenantName}</span>
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              label="选择VOD首页"
+            >
+              {getFieldDecorator('mediaHomePageId', {
+              })(
+                <Select>
+                  { vodData }
+                </Select>
               )}
             </FormItem>
           </Form>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Layout, Breadcrumb, Table, Divider, Select, Button, message, Modal } from 'antd';
+import { Layout, Breadcrumb, Table, Divider, Select, Button, message, Modal, Input } from 'antd';
 
 import './appManage.css';
 import Utils from '../../common/Utils';
@@ -23,6 +23,7 @@ class Strategy extends Component {
       packageNameData: [],
     };
     this.search = {
+      title: '',
       appAction: '',
       packageName: '',
       tenantId: '',
@@ -151,6 +152,7 @@ class Strategy extends Component {
         tenantId: this.search.tenantId,
         packageName: this.search.packageName,
         appAction: this.search.appAction,
+        title: this.search.title,
         sort: 'updateTime',
         order: 'desc',
         page,
@@ -240,6 +242,9 @@ class Strategy extends Component {
   searchOnChange = (value, type) => {
     console.log(value, type);
     switch (type) {
+      case 'title':
+        this.search.title = value.target.value;
+        break;
       case 'appAction':
         this.search.appAction = value;
         break;
@@ -268,6 +273,11 @@ class Strategy extends Component {
               <Button type="primary" onClick={() => this.$addStrategy.showModal(this.state)}>新建策略</Button>
               {/* <Button style={{ marginLeft: '10px' }} type="primary" onClick={() => this.$addStrategy.showModal(this.state)}>新建批量策略</Button> */}
               <div style={{ float: 'right' }}>
+                <Input
+                  placeholder="名称"
+                  onChange={value => this.searchOnChange(value, 'title')}
+                  style={{ width: 200, marginRight: 7 }}
+                />
                 <Select
                   onChange={value => this.searchOnChange(value, 'appAction')}
                   style={{ width: 130, marginRight: 7 }}

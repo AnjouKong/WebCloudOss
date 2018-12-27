@@ -86,6 +86,8 @@ class websiteManage extends Component {
       data: {
         page,
         size,
+        sort: 'updateTime',
+        order: 'desc',
         type: 'website',
         name: this.name,
         categoryId,

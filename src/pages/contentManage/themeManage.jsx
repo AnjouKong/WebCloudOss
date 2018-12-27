@@ -91,6 +91,8 @@ class themeManage extends Component {
       data: {
         page,
         size,
+        sort: 'updateTime',
+        order: 'desc',
         type: 'theme',
         name: this.name,
         categoryId,

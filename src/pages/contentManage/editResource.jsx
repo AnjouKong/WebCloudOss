@@ -174,6 +174,7 @@ class editResource extends Component {
           accept: acceptType,
           action: `${window.PAY_API_HOST}/op/ui/content/upload`,
           listType: 'picture',
+          multiple: !isSingle,
           // fileList: this.filesList_Data[i] ? this.filesList_Data[i] : [],
           // defaultFileList: this.createBody(defaultData),
           onChange: (info) => {
